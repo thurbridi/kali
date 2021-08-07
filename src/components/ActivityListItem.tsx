@@ -16,29 +16,34 @@ const ActivityListItem = ({ activity }: Props) => {
       {activity.description && <p>{activity.description}</p>}
       {activity.dueDate && <p>Due: {activity.dueDate}</p>}
       <button
+        onClick={() => dispatch({ type: 'REMOVE_ACTIVITY', payload: { id: activity.id } })}
+      >
+        Remove
+      </button>
+      <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Backlog' } } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'backlog' } } })
         }}
       >
         Backlog
       </button>
       <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Available' } } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'available' } } })
         }}
       >
         Available
       </button>
       <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Doing' } } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'doing' } } })
         }}
       >
         Doing
       </button>
       <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Done' } } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'done' } } })
         }}
       >
         Done

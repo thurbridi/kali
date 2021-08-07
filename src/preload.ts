@@ -1,9 +1,12 @@
+import { AppState } from "./types/types"
+
 const { contextBridge, ipcRenderer } = require('electron')
 
 
 contextBridge.exposeInMainWorld(
-    'api',
-    {
-        askForSomething: (number: any) => ipcRenderer.invoke('DO_SOMETHING', number)
-    }
+  'api',
+  {
+    loadState: () => ipcRenderer.invoke('LOAD_STATE'),
+    saveState: (state: AppState) => ipcRenderer.invoke('SAVE_STATE', state)
+  }
 )

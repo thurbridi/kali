@@ -15,47 +15,47 @@ const actId3 = uuidv4()
 
 
 export const initialSources: Source[] = [
-  {
-    id: srcId1,
-    name: 'Kali App',
-  },
-  {
-    id: srcId2,
-    name: 'Physics',
-  }
+  // {
+  //   id: srcId1,
+  //   name: 'Kali App',
+  // },
+  // {
+  //   id: srcId2,
+  //   name: 'Physics',
+  // }
 ]
 
 const initialActivities: Activity[] = [
-  {
-    id: actId1,
-    title: 'Learn about blackholes',
-    description: 'where do they put stuff?',
-    startDate: undefined,
-    endDate: undefined,
-    dueDate: undefined,
-    sourceID: srcId2,
-    status: 'Backlog',
-  },
-  {
-    id: actId2,
-    title: 'Learn React enough to do this',
-    description: 'The Complete React Developer Course',
-    startDate: 'Aug 1st',
-    endDate: 'Aug 6th',
-    dueDate: undefined,
-    sourceID: srcId1,
-    status: 'Done',
-  },
-  {
-    id: actId3,
-    title: 'Develop Kali',
-    description: 'basically Trello 2',
-    startDate: 'Aug 6th',
-    endDate: undefined,
-    dueDate: 'Aug 31st',
-    sourceID: srcId1,
-    status: 'Doing',
-  },
+  // {
+  //   id: actId1,
+  //   title: 'Learn about blackholes',
+  //   description: 'where do they put stuff?',
+  //   startDate: undefined,
+  //   endDate: undefined,
+  //   dueDate: undefined,
+  //   sourceID: srcId2,
+  //   status: 'Backlog',
+  // },
+  // {
+  //   id: actId2,
+  //   title: 'Learn React enough to do this',
+  //   description: 'The Complete React Developer Course',
+  //   startDate: 'Aug 1st',
+  //   endDate: 'Aug 6th',
+  //   dueDate: undefined,
+  //   sourceID: srcId1,
+  //   status: 'Done',
+  // },
+  // {
+  //   id: actId3,
+  //   title: 'Develop Kali',
+  //   description: 'basically Trello 2',
+  //   startDate: 'Aug 6th',
+  //   endDate: undefined,
+  //   dueDate: 'Aug 31st',
+  //   sourceID: srcId1,
+  //   status: 'Doing',
+  // },
 ]
 
 const initialTags: string[] = []

@@ -15,29 +15,27 @@ const ActivityForm = ({ source, onSubmit }: Props) => {
   const [activityTitle, setActivityTitle] = useState('')
   const [activityDesc, setActivityDesc] = useState('')
 
-  const createActivity = (title: string, description: string): Activity => {
-    return {
-      id: uuidv4(),
-      title,
-      description,
-      startDate: undefined,
-      endDate: undefined,
-      dueDate: undefined,
-      sourceID: source.id,
-      status: 'Backlog',
-    }
-  }
-
-  const onAddActivity = (activity: Activity) => {
+  const onAddActivity = (title: string, description: string) => {
     dispatch({
       type: 'ADD_ACTIVITY',
-      payload: { activity }
+      payload: {
+        activity: {
+          id: uuidv4(),
+          title,
+          description,
+          startDate: undefined,
+          endDate: undefined,
+          dueDate: undefined,
+          sourceID: source.id,
+          status: 'Backlog',
+        }
+      }
     })
   }
 
   return (
     <form onSubmit={(event) => {
-      onAddActivity(createActivity(activityTitle, activityDesc))
+      onAddActivity(activityTitle, activityDesc)
       setActivityTitle('')
       setActivityDesc('')
       onSubmit(event)
