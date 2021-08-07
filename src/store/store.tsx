@@ -15,9 +15,9 @@ const store = createContext(null)
 const { Provider } = store
 
 const StoreProvider: React.FC = ({ children }) => {
-    const [state, dispatch] = useReducer<AppReducer>(appReducer, initialAppState)
+  const [state, dispatch] = useReducer<AppReducer>(appReducer, initialAppState)
 
-    return <Provider value={{ state, dispatch }}> {children}</Provider >
+  return <Provider value={{ state, dispatch }}> {children}</Provider >
 }
 
 export { store, StoreProvider }
