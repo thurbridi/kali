@@ -1,8 +1,13 @@
 import React, { useContext } from 'react'
+import { Activity } from '../types/types'
 import { store } from '../store/store'
 
 
-const ActivityListItem = ({ activity }: any) => {
+interface Props {
+  activity: Activity
+}
+
+const ActivityListItem = ({ activity }: Props) => {
   const { dispatch } = useContext(store)
 
   return (
