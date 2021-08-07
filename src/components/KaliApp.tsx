@@ -1,8 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { Source, Activity, store, StoreProvider } from '../store/store'
+import type { Activity, Source } from '../types/types'
 
+import { store, StoreProvider } from '../store/store'
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
 
 
 
@@ -15,8 +18,8 @@ const ActivityList = (props: any) => {
       <h2>{props.title}</h2>
       {
         activities.filter(
-          activity => activity.status === props.title
-        ).map(activity => <ActivityListItem key={activity.id} activity={activity} />)
+          (activity: Activity) => activity.status === props.title
+        ).map((activity: Activity) => <ActivityListItem key={activity.id} activity={activity} />)
       }
     </div>
   )
@@ -32,28 +35,28 @@ const ActivityListItem = ({ activity }: any) => {
       {activity.dueDate && <p>Due: {activity.dueDate}</p>}
       <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', activity: { ...activity, status: 'Backlog' } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Backlog' } } })
         }}
       >
         Backlog
       </button>
       <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', activity: { ...activity, status: 'Available' } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Available' } } })
         }}
       >
         Available
       </button>
       <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', activity: { ...activity, status: 'Doing' } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Doing' } } })
         }}
       >
         Doing
       </button>
       <button
         onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', activity: { ...activity, status: 'Done' } })
+          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'Done' } } })
         }}
       >
         Done
@@ -70,39 +73,58 @@ const SourcesList = () => {
 
   return (
     <div>
-      <h3>Sources:</h3>
-      {state.sources.map(source => <SourceListItem key={source.id} source={source} />)}
+      <h3>Sources</h3>
+      {state.sources.map((source: Source) => <SourceListItem key={source.id} source={source} />)}
     </div>
   )
 }
 
 const SourceListItem = ({ source }: any) => {
   const { state, dispatch } = useContext(store)
+  const [open, setOpen] = useState(false)
+  const [activityTitle, setActivityTitle] = useState('')
+  const [activityDesc, setActivityDesc] = useState('')
 
-  const sourceActivities = state.activities.filter(activity => activity.sourceID === source.id)
-  const numCompleted = sourceActivities.filter(
-    (activity) => activity.status === 'Done').length
+  const sourceActivities = state.activities.filter((activity: Activity) => activity.sourceID === source.id)
+  const numCompleted = sourceActivities.filter((activity: Activity) => activity.status === 'Done').length
 
-  const onAddActivity = (sourceID: string) => {
+  const createActivity = (title: string, description: string): Activity => {
+    return {
+      id: uuidv4(),
+      title,
+      description,
+      startDate: undefined,
+      endDate: undefined,
+      dueDate: undefined,
+      sourceID: source.id,
+      status: 'Backlog',
+    }
+  }
+
+  const onAddActivity = (activity: Activity) => {
     dispatch({
-      type: 'ADD_ACTIVITY', activity: {
-        id: uuidv4(),
-        title: 'Learn about blackholes',
-        description: 'where do they put stuff?',
-        startDate: undefined,
-        endDate: undefined,
-        dueDate: undefined,
-        sourceID: sourceID,
-        status: 'Backlog',
-      }
+      type: 'ADD_ACTIVITY',
+      payload: { activity }
     })
   }
 
   return (
     <div>
       <p>{source.name}</p>
-      <button onClick={() => onAddActivity(source.id)}>Add activity</button>
+      <button onClick={() => setOpen(true)}>Add activity</button>
       <p>{numCompleted}/{sourceActivities.length}</p>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <form onSubmit={(event) => {
+          event.preventDefault()
+          onAddActivity(createActivity(activityTitle, activityDesc))
+          setOpen(false)
+        }}>
+          <h3>New activity for {source.name}</h3>
+          <input type='text' placeholder='Title' value={activityTitle} onChange={(event) => setActivityTitle(event.target.value)} />
+          <textarea placeholder='Description' value={activityDesc} onChange={(event) => setActivityDesc(event.target.value)} />
+          <button>Add activity</button>
+        </form>
+      </Modal>
     </div>
   )
 }
