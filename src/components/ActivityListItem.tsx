@@ -11,7 +11,7 @@ const ActivityListItem = ({ activity }: Props) => {
   const { dispatch } = useContext(store)
 
   return (
-    <div>
+    <div className='activityList__item'>
       <h4>{activity.title}</h4>
       {activity.description && <p>{activity.description}</p>}
       {activity.dueDate && <p>Due: {activity.dueDate}</p>}

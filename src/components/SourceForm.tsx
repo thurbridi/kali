@@ -24,7 +24,8 @@ const SourceForm = ({ onSubmit }: Props) => {
   }
 
   return (
-    <form onSubmit={onAddSource}>
+    <form className='form' onSubmit={onAddSource}>
+      <h3>New activity source</h3>
       <input type='text' value={title} onChange={(event) => setTitle(event.target.value)}></input>
       <button>Add</button>
     </form>

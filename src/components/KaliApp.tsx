@@ -1,15 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
-
-
-import { store } from '../store/store'
-import 'react-responsive-modal/styles.css';
+import React from 'react'
 import ActivityList from './ActivityList';
 import SourceList from './SourceList';
 
-
 const KaliApp = () => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div className='workspace'>
       <SourceList />
       <ActivityList title='Backlog' />
       <ActivityList title='Available' />

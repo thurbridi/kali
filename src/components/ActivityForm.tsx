@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react"
-import { Source, Activity } from '../types/types'
+import { Source } from '../types/types'
 import { store } from '../store/store'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -34,7 +34,7 @@ const ActivityForm = ({ source, onSubmit }: Props) => {
   }
 
   return (
-    <form onSubmit={(event) => {
+    <form className='form' onSubmit={(event) => {
       onAddActivity(activityTitle, activityDesc)
       setActivityTitle('')
       setActivityDesc('')

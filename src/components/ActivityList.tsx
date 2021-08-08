@@ -15,7 +15,7 @@ const ActivityList = ({ title }: Props) => {
   )
 
   return (
-    <div>
+    <div className='activityList'>
       <h2>{title}</h2>
       {
         activitiesInList.map((activity: Activity) =>

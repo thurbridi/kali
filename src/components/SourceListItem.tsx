@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react"
 import { store } from '../store/store'
 import type { Activity, Source } from '../types/types'
-import { Modal } from 'react-responsive-modal';
+import Modal from 'react-modal';
 import ActivityForm from "./ActivityForm";
 
 interface Props {
@@ -39,7 +39,7 @@ const SourceListItem = ({ source }: Props) => {
         })
       }}>Remove Source</button>
       <button onClick={() => setOpen(true)}>Add activity</button>
-      <Modal open={open} onClose={() => setOpen(false)}>
+      <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
         <ActivityForm source={source} onSubmit={onSubmit} />
       </Modal>
     </div>
