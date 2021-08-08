@@ -13,7 +13,7 @@ const SourceListItem = ({ source }: Props) => {
   const [open, setOpen] = useState(false)
 
   const sourceActivities = state.activities.filter((activity: Activity) => activity.sourceID === source.id)
-  const numCompleted = sourceActivities.filter((activity: Activity) => activity.status === 'Done').length
+  const numCompleted = sourceActivities.filter((activity: Activity) => activity.status.toLowerCase() === 'done').length
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()

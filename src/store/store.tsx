@@ -11,21 +11,18 @@ const StoreProvider: React.FC = ({ children }) => {
   const [state, dispatch] = useReducer<AppReducer>(appReducer, initialAppState)
 
   useEffect(() => {
-
-    console.log('loading state')
-
     window.api.loadState().then(state => {
-      console.log(state)
       dispatch({
         type: 'LOAD_LOCAL_DATA',
         payload: { ...state }
       })
+    }).catch(() => {
+      console.log('No local data available')
     })
 
   }, [])
 
   useEffect(() => {
-    console.log('state changed')
     window.api.saveState(state)
   }, [state])
 
