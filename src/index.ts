@@ -65,7 +65,7 @@ declare global {
   }
 }
 
-storage.setDataPath(path.join(app.getPath('userData'), 'data'))
+storage.setDataPath(path.join(app.getPath('userData'), 'state'))
 
 ipcMain.handle('SAVE_STATE', (event, state) => {
   console.log('SAVE_STATE')

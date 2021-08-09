@@ -21,7 +21,7 @@ const SourceListItem = ({ source }: Props) => {
   }
 
   return (
-    <div>
+    <div className='sourceList__item' onClick={() => setOpen(true)}>
       <p>{source.name}</p>
       <p>{numCompleted}/{sourceActivities.length} Completed</p>
       <button onClick={() => {
@@ -38,7 +38,7 @@ const SourceListItem = ({ source }: Props) => {
           }
         })
       }}>Remove Source</button>
-      <button onClick={() => setOpen(true)}>Add activity</button>
+      {/* <button onClick={() => setOpen(true)}>Add activity</button> */}
       <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
         <ActivityForm source={source} onSubmit={onSubmit} />
       </Modal>
