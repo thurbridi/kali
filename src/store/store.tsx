@@ -12,10 +12,12 @@ const StoreProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     window.api.loadState().then(state => {
-      dispatch({
-        type: 'LOAD_LOCAL_DATA',
-        payload: { ...state }
-      })
+      if (!(JSON.stringify(state) === '{}')) {
+        dispatch({
+          type: 'LOAD_LOCAL_DATA',
+          payload: { ...state }
+        })
+      }
     }).catch(() => {
       console.log('No local data available')
     })
