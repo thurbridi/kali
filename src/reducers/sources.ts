@@ -6,7 +6,7 @@ const sourcesReducer = (state: Source[], action: Action): Source[] => {
       return [...state, action.payload.source]
     case 'UPDATE_SOURCE':
       return [
-        ...state.filter(source => source.id !== action.payload.id),
+        ...state.filter(source => source.id !== action.payload.source.id),
         action.payload.source
       ]
     case 'REMOVE_SOURCE':

@@ -6,6 +6,7 @@ export type Action = {
 export interface Source {
   id: string
   name: string
+  description: string
 }
 
 export interface Activity {

@@ -1,6 +1,9 @@
-import React, { useContext } from 'react'
-import { Activity } from '../types/types'
+import React, { useContext, useState } from 'react'
+import type { Activity } from '../types/types'
 import { store } from '../store/store'
+import Modal from 'react-modal';
+import ActivityForm from './ActivityForm'
+
 
 
 interface Props {
@@ -9,9 +12,15 @@ interface Props {
 
 const ActivityListItem = ({ activity }: Props) => {
   const { dispatch } = useContext(store)
+  const [openActivity, setOpenActivity] = useState(false)
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setOpenActivity(false)
+  }
 
   return (
-    <div className='activityList__item'>
+    <div className='activityList__item' onClick={() => setOpenActivity(true)}>
       <h4>{activity.title}</h4>
       {activity.description && <p>{activity.description}</p>}
       {activity.dueDate && <p>Due: {activity.dueDate}</p>}
@@ -48,6 +57,9 @@ const ActivityListItem = ({ activity }: Props) => {
       >
         Done
       </button>
+      <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
+        <ActivityForm onSubmit={onSubmit} activity={activity} />
+      </Modal>
     </div>
   )
 

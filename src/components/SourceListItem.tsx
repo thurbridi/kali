@@ -3,6 +3,7 @@ import { store } from '../store/store'
 import type { Activity, Source } from '../types/types'
 import Modal from 'react-modal';
 import ActivityForm from "./ActivityForm";
+import SourceForm from "./SourceForm";
 
 interface Props {
   source: Source
@@ -11,6 +12,7 @@ interface Props {
 const SourceListItem = ({ source }: Props) => {
   const { state, dispatch } = useContext(store)
   const [open, setOpen] = useState(false)
+  const [openActivity, setOpenActivity] = useState(false)
 
   const sourceActivities = state.activities.filter((activity: Activity) => activity.sourceID === source.id)
   const numCompleted = sourceActivities.filter((activity: Activity) => activity.status.toLowerCase() === 'done').length
@@ -18,28 +20,35 @@ const SourceListItem = ({ source }: Props) => {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setOpen(false)
+    setOpenActivity(false)
+  }
+
+  const removeSource = () => {
+    dispatch({
+      type: 'REMOVE_SOURCE',
+      payload: {
+        id: source.id
+      }
+    })
+    dispatch({
+      type: 'REMOVE_ALL_FROM_SOURCE',
+      payload: {
+        id: source.id
+      }
+    })
   }
 
   return (
     <div className='sourceList__item' onClick={() => setOpen(true)}>
       <p>{source.name}</p>
       <p>{numCompleted}/{sourceActivities.length} Completed</p>
-      <button onClick={() => {
-        dispatch({
-          type: 'REMOVE_SOURCE',
-          payload: {
-            id: source.id
-          }
-        })
-        dispatch({
-          type: 'REMOVE_ALL_FROM_SOURCE',
-          payload: {
-            id: source.id
-          }
-        })
-      }}>Remove Source</button>
-      {/* <button onClick={() => setOpen(true)}>Add activity</button> */}
+      <button onClick={removeSource}>Remove Source</button>
+      <button onClick={() => setOpenActivity(true)}>Add activity</button>
       <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
+        <SourceForm onSubmit={onSubmit} sourceItem={source} />
+      </Modal>
+
+      <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
         <ActivityForm source={source} onSubmit={onSubmit} />
       </Modal>
     </div>

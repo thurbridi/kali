@@ -1,28 +1,29 @@
 import React, { useState, useContext } from "react"
-import { Source } from '../types/types'
+import type { Activity, Source } from '../types/types'
 import { store } from '../store/store'
 import { v4 as uuidv4 } from 'uuid'
 
 
 interface Props {
-  source: Source
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+  source?: Source
+  activity?: Activity
 }
 
-const ActivityForm = ({ source, onSubmit }: Props) => {
+const ActivityForm = ({ onSubmit, source, activity }: Props) => {
   const { dispatch } = useContext(store)
 
-  const [activityTitle, setActivityTitle] = useState('')
-  const [activityDesc, setActivityDesc] = useState('')
+  const [activityTitle, setActivityTitle] = useState(activity ? activity.title : '')
+  const [activityDesc, setActivityDesc] = useState(activity ? activity.description : '')
 
-  const onAddActivity = (title: string, description: string) => {
+  const addActivity = (event: React.FormEvent<HTMLFormElement>) => {
     dispatch({
       type: 'ADD_ACTIVITY',
       payload: {
         activity: {
           id: uuidv4(),
-          title,
-          description,
+          title: activityTitle,
+          description: activityDesc,
           startDate: undefined,
           endDate: undefined,
           dueDate: undefined,
@@ -31,19 +32,30 @@ const ActivityForm = ({ source, onSubmit }: Props) => {
         }
       }
     })
+    setActivityTitle('')
+    setActivityDesc('')
+    onSubmit(event)
+  }
+
+  const updateActivity = (event: React.FormEvent<HTMLFormElement>) => {
+    dispatch({
+      type: 'UPDATE_ACTIVITY',
+      payload: {
+        activity: {
+          ...activity,
+          title: activityTitle,
+          description: activityDesc,
+        }
+      }
+    })
+    onSubmit(event)
   }
 
   return (
-    <form className='form' onSubmit={(event) => {
-      onAddActivity(activityTitle, activityDesc)
-      setActivityTitle('')
-      setActivityDesc('')
-      onSubmit(event)
-    }}>
-      <h3>New activity for {source.name}</h3>
+    <form className='form' onSubmit={(event) => activity ? updateActivity(event) : addActivity(event)}>
       <input type='text' placeholder='Title' value={activityTitle} onChange={(event) => setActivityTitle(event.target.value)} />
       <textarea placeholder='Description' value={activityDesc} onChange={(event) => setActivityDesc(event.target.value)} />
-      <button>Add activity</button>
+      <button>{activity ? 'Save' : 'Add activity'}</button>
     </form>
   )
 }
