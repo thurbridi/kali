@@ -1,62 +1,54 @@
-import React, { useState, useContext } from 'react';
-import { store } from '../store/store'
-import { v4 as uuidv4 } from 'uuid'
+import React, { useState } from 'react';
 import type { Source } from '../types/types';
+import { connect, ConnectedProps } from 'react-redux'
+import { sourceAddedAsync, sourceEdited, sourceEditedAsync } from '../actions/sources';
+import { AppDispatch } from '../store/store';
 
-interface Props {
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
-  sourceItem?: Source
+interface Props extends PropsFromRedux {
+    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+    sourceItem?: Source
 }
 
-const SourceForm = ({ onSubmit, sourceItem }: Props) => {
-  const { dispatch } = useContext(store)
-  const [name, setName] = useState(sourceItem ? sourceItem.name : '')
-  const [description, setDescription] = useState(sourceItem ? sourceItem.description : '')
+const SourceForm = (props: Props) => {
+    const [title, setTitle] = useState(props.sourceItem ? props.sourceItem.title : '')
+    const [description, setDescription] = useState(props.sourceItem ? props.sourceItem.description : '')
 
-  const addSource = (event: React.FormEvent<HTMLFormElement>) => {
-    dispatch({
-      type: 'ADD_SOURCE',
-      payload: {
-        source: {
-          id: uuidv4(),
-          name,
-          description
-        }
-      }
-    })
-    onSubmit(event)
-  }
+    const onTitleChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setTitle(event.target.value)
+    }
 
-  const editSource = (event: React.FormEvent<HTMLFormElement>) => {
-    dispatch({
-      type: 'UPDATE_SOURCE',
-      payload: {
-        source: {
-          ...sourceItem,
-          name,
-          description
-        }
-      }
-    })
-    onSubmit(event)
-  }
+    const onDescriptionChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setDescription(event.target.value)
+    }
 
-  return (
-    <form className='form' onSubmit={sourceItem ? editSource : addSource}>
-      <input
-        type='text'
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        placeholder='Source title'
-      />
-      <textarea
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        placeholder='Description'
-      />
-      <button>{sourceItem ? 'Save' : 'Add'}</button>
-    </form>
-  )
+    return (
+        <form className='form' onSubmit={(event) => {
+            props.sourceItem ? props.sourceEditedAsync({ ...props.sourceItem, title, description }) : props.sourceAddedAsync({ title, description })
+            props.onSubmit(event)
+        }}>
+            <input
+                type='text'
+                value={title}
+                onChange={onTitleChange}
+                placeholder='Source title'
+            />
+            <textarea
+                value={description}
+                onChange={onDescriptionChange}
+                placeholder='Description'
+            />
+            <button>{props.sourceItem ? 'Save' : 'Add'}</button>
+        </form>
+    )
 }
 
-export default SourceForm
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+    sourceAddedAsync: (source: { title?: string, description?: string }) => dispatch(sourceAddedAsync(source)),
+    sourceEditedAsync: (source: Source) => dispatch(sourceEditedAsync(source))
+})
+
+const connector = connect(undefined, mapDispatchToProps)
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+export default connector(SourceForm)

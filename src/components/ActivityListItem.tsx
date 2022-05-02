@@ -1,68 +1,81 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import type { Activity } from '../types/types'
-import { store } from '../store/store'
 import Modal from 'react-modal';
 import ActivityForm from './ActivityForm'
+import { connect } from 'react-redux';
+import { activityEdited, activityRemoved } from '../actions/activities';
 
 
 
 interface Props {
-  activity: Activity
+    activity: Activity,
+    dispatch: any
 }
 
-const ActivityListItem = ({ activity }: Props) => {
-  const { dispatch } = useContext(store)
-  const [openActivity, setOpenActivity] = useState(false)
+const ActivityListItem = (props: Props) => {
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setOpenActivity(false)
-  }
+    const [openActivity, setOpenActivity] = useState(false)
 
-  return (
-    <div className='activityList__item' onClick={() => setOpenActivity(true)}>
-      <h4>{activity.title}</h4>
-      {activity.description && <p>{activity.description}</p>}
-      {activity.dueDate && <p>Due: {activity.dueDate}</p>}
-      <button
-        onClick={() => dispatch({ type: 'REMOVE_ACTIVITY', payload: { id: activity.id } })}
-      >
-        Remove
-      </button>
-      <button
-        onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'backlog' } } })
-        }}
-      >
-        Backlog
-      </button>
-      <button
-        onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'available' } } })
-        }}
-      >
-        Available
-      </button>
-      <button
-        onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'doing' } } })
-        }}
-      >
-        Doing
-      </button>
-      <button
-        onClick={() => {
-          dispatch({ type: 'UPDATE_ACTIVITY', payload: { activity: { ...activity, status: 'done' } } })
-        }}
-      >
-        Done
-      </button>
-      <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
-        <ActivityForm onSubmit={onSubmit} activity={activity} />
-      </Modal>
-    </div>
-  )
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setOpenActivity(false)
+    }
+
+    const activity = props.activity
+
+    return (
+        <div className='activityList__item'>
+            <h4>{activity.title}</h4>
+            {activity.description && <p>{activity.description}</p>}
+            {activity.dueDate && <p>Due: {activity.dueDate}</p>}
+            <button
+                onClick={() => setOpenActivity(true)}
+            >
+                Edit
+            </button>
+            <button
+                onClick={() => props.dispatch(activityRemoved(activity.id))}
+            >
+                Remove
+            </button>
+            <button
+                onClick={() => {
+                    props.dispatch(activityEdited({ ...activity, status: 'backlog' }))
+                }}
+            >
+                Backlog
+            </button>
+            <button
+                onClick={() => {
+                    props.dispatch(activityEdited({ ...activity, status: 'available' }))
+                }}
+            >
+                Available
+            </button>
+            <button
+                onClick={() => {
+                    props.dispatch(activityEdited({ ...activity, status: 'doing' }))
+                }}
+            >
+                Doing
+            </button>
+            <button
+                onClick={() => {
+                    props.dispatch(activityEdited({ ...activity, status: 'done' }))
+                }}
+            >
+                Done
+            </button>
+            <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
+                <ActivityForm onSubmit={onSubmit} activity={activity} />
+            </Modal>
+        </div>
+    )
 
 }
 
-export default ActivityListItem
+const mapStateToProps = (state: any) => {
+    return {}
+}
+
+export default connect(mapStateToProps)(ActivityListItem)

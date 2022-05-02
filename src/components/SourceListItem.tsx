@@ -1,58 +1,56 @@
-import React, { useState, useContext } from "react"
-import { store } from '../store/store'
-import type { Activity, Source } from '../types/types'
+import React, { useState } from "react"
+import type { Source } from '../types/types'
 import Modal from 'react-modal';
 import ActivityForm from "./ActivityForm";
 import SourceForm from "./SourceForm";
+import { sourceRemovedAsync } from "../actions/sources";
+import { connect, ConnectedProps } from "react-redux";
+import { AppDispatch } from "../store/store";
 
-interface Props {
-  source: Source
+interface Props extends PropsFromRedux {
+    source: Source,
+    numActivities: number,
+    numCompletedActivities: number,
 }
 
-const SourceListItem = ({ source }: Props) => {
-  const { state, dispatch } = useContext(store)
-  const [open, setOpen] = useState(false)
-  const [openActivity, setOpenActivity] = useState(false)
+const SourceListItem = (props: Props) => {
+    const [open, setOpen] = useState(false)
+    const [openActivity, setOpenActivity] = useState(false)
 
-  const sourceActivities = state.activities.filter((activity: Activity) => activity.sourceID === source.id)
-  const numCompleted = sourceActivities.filter((activity: Activity) => activity.status.toLowerCase() === 'done').length
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setOpen(false)
+        setOpenActivity(false)
+    }
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setOpen(false)
-    setOpenActivity(false)
-  }
+    const onRemove = () => {
+        props.sourceRemovedAsync(props.source.id)
+    }
 
-  const removeSource = () => {
-    dispatch({
-      type: 'REMOVE_SOURCE',
-      payload: {
-        id: source.id
-      }
-    })
-    dispatch({
-      type: 'REMOVE_ALL_FROM_SOURCE',
-      payload: {
-        id: source.id
-      }
-    })
-  }
+    return (
+        <div className='sourceList__item'>
+            <p>{props.source.title}</p>
+            <p>{props.numCompletedActivities}/{props.numActivities} Completed</p>
+            <button onClick={() => setOpen(true)}>Edit Source</button>
+            <button onClick={onRemove}>Remove Source</button>
+            <button onClick={() => setOpenActivity(true)}>Add activity</button>
+            <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
+                <SourceForm onSubmit={onSubmit} sourceItem={props.source} />
+            </Modal>
 
-  return (
-    <div className='sourceList__item' onClick={() => setOpen(true)}>
-      <p>{source.name}</p>
-      <p>{numCompleted}/{sourceActivities.length} Completed</p>
-      <button onClick={removeSource}>Remove Source</button>
-      <button onClick={() => setOpenActivity(true)}>Add activity</button>
-      <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
-        <SourceForm onSubmit={onSubmit} sourceItem={source} />
-      </Modal>
-
-      <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
-        <ActivityForm source={source} onSubmit={onSubmit} />
-      </Modal>
-    </div>
-  )
+            <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
+                <ActivityForm source={props.source} onSubmit={onSubmit} />
+            </Modal>
+        </div>
+    )
 }
 
-export default SourceListItem
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+    sourceRemovedAsync: (id: string) => dispatch(sourceRemovedAsync(id))
+})
+
+const connector = connect(undefined, mapDispatchToProps)
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+export default connector(SourceListItem)

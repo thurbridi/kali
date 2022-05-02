@@ -1,33 +1,51 @@
-import React, { useContext, useEffect, useState } from "react"
-import { store } from '../store/store'
+import React, { useEffect, useState } from "react"
 import SourceListItem from './SourceListItem'
-
-import type { Source } from '../types/types'
+import type { Source, Activity } from '../types/types'
 import Modal from 'react-modal'
 import SourceForm from "./SourceForm"
+import { connect } from "react-redux"
+import { RootState } from "../store/store"
 
-const SourceList = () => {
-  const { state } = useContext(store)
 
-  const [open, setOpen] = useState(false)
+const SourceList = (props: any) => {
+    const [open, setOpen] = useState(false)
 
-  useEffect(() => Modal.setAppElement('body'), [])
+    useEffect(() => Modal.setAppElement('body'), [])
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setOpen(false)
-  }
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setOpen(false)
+    }
 
-  return (
-    <div>
-      <h3>Sources</h3>
-      <button onClick={() => setOpen(true)}>Add Source</button>
-      {state.sources.map((source: Source) => <SourceListItem key={source.id} source={source} />)}
-      <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
-        <SourceForm onSubmit={onSubmit} />
-      </Modal>
-    </div>
-  )
+    return (
+        <div>
+            <h3>Sources</h3>
+            <button onClick={() => setOpen(true)}>Add Source</button>
+            {
+                Object.values(props.sources).map((source: Source) => {
+                    const sourceActivities = Object.values(props.activities).filter((activity: Activity) => activity.sourceId === source.id)
+                    const numCompleted = sourceActivities.filter((activity: Activity) => activity.status.toLowerCase() === 'done').length
+
+                    return <SourceListItem
+                        key={source.id}
+                        source={source}
+                        numActivities={sourceActivities.length}
+                        numCompletedActivities={numCompleted}
+                    />
+                })
+            }
+            <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
+                <SourceForm onSubmit={onSubmit} />
+            </Modal>
+        </div>
+    )
 }
 
-export default SourceList
+const mapStateToProps = (state: RootState) => {
+    return {
+        sources: state.sources,
+        activities: state.activities,
+    }
+}
+
+export default connect(mapStateToProps)(SourceList)

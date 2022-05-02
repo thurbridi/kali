@@ -1,12 +1,10 @@
-import { AppState } from "./types/types"
+import { contextBridge, ipcRenderer } from 'electron'
+import { IStorageAPI } from './index'
 
-const { contextBridge, ipcRenderer } = require('electron')
+const storageAPI: IStorageAPI = {
+    loadKey: (key) => ipcRenderer.invoke('storage:loadKey', key),
+    storeKey: (key, value) => ipcRenderer.invoke('storage:storeKey', key, value),
+    deleteKey: (key) => ipcRenderer.invoke('storage:deleteKey', key)
+}
 
-
-contextBridge.exposeInMainWorld(
-  'api',
-  {
-    loadState: () => ipcRenderer.invoke('LOAD_STATE'),
-    saveState: (state: AppState) => ipcRenderer.invoke('SAVE_STATE', state)
-  }
-)
+contextBridge.exposeInMainWorld('storageAPI', storageAPI)

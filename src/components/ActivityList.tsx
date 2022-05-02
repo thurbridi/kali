@@ -1,29 +1,34 @@
 import React, { useContext } from 'react'
-import { store } from '../store/store'
 import ActivityListItem from './ActivityListItem'
 import type { Activity } from '../types/types'
+import { connect } from 'react-redux'
 
 interface Props {
-  title: string
-
+    title: string
+    activities: Activity[]
 }
 
-const ActivityList = ({ title }: Props) => {
-  const { state } = useContext(store)
-  const activitiesInList = state.activities.filter((activity: Activity) =>
-    activity.status.toLowerCase() === title.toLowerCase()
-  )
+const ActivityList = (props: Props) => {
+    const activitiesInList = Object.values(props.activities).filter((activity: Activity) =>
+        activity.status.toLowerCase() === props.title.toLowerCase()
+    )
 
-  return (
-    <div className='activityList'>
-      <h2>{title}</h2>
-      {
-        activitiesInList.map((activity: Activity) =>
-          <ActivityListItem key={activity.id} activity={activity} />
-        )
-      }
-    </div>
-  )
+    return (
+        <div className='activityList'>
+            <h2>{props.title}</h2>
+            {
+                activitiesInList.map((activity: Activity) =>
+                    <ActivityListItem key={activity.id} activity={activity} />
+                )
+            }
+        </div>
+    )
 }
 
-export default ActivityList
+const mapStateToProps = (state: any) => {
+    return {
+        activities: state.activities
+    }
+}
+
+export default connect(mapStateToProps)(ActivityList)
