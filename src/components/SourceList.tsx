@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import SourceListItem from './SourceListItem'
-import type { Source, Activity } from '../types/types'
+import { Source, Activity, ActivityStatus } from '../types/types'
 import Modal from 'react-modal'
 import SourceForm from "./SourceForm"
 import { connect } from "react-redux"
@@ -24,7 +24,7 @@ const SourceList = (props: any) => {
             {
                 Object.values(props.sources).map((source: Source) => {
                     const sourceActivities = Object.values(props.activities).filter((activity: Activity) => activity.sourceId === source.id)
-                    const numCompleted = sourceActivities.filter((activity: Activity) => activity.status.toLowerCase() === 'done').length
+                    const numCompleted = sourceActivities.filter((activity: Activity) => activity.status === ActivityStatus.Done).length
 
                     return <SourceListItem
                         key={source.id}

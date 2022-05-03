@@ -9,6 +9,13 @@ export interface Source {
     description: string
 }
 
+export enum ActivityStatus {
+    Backlog = "BACKLOG",
+    Available = "AVAILABLE",
+    InProgress = "IN PROGRESS",
+    Done = "DONE",
+}
+
 export interface Activity {
     id: string
     title: string
@@ -18,7 +25,7 @@ export interface Activity {
     endDate: string | undefined
     dueDate: string | undefined
     sourceId: string
-    status: string
+    status: ActivityStatus
     isArchived: boolean
     rank: number
 }

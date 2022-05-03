@@ -1,4 +1,4 @@
-import { Action, Activity } from "../types/types";
+import { Action, Activity, ActivityStatus } from "../types/types";
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppDispatch } from "../store/store";
@@ -18,7 +18,7 @@ export const activityAddedAsync = (activityData: Partial<Activity> = {}) => {
         endDate: undefined,
         dueDate: undefined,
         sourceId: undefined,
-        status: 'Backlog',
+        status: ActivityStatus.Backlog,
         rank: undefined,
         isArchived: false,
         tags: undefined,

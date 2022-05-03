@@ -1,16 +1,17 @@
 import React, { useContext } from 'react'
 import ActivityListItem from './ActivityListItem'
-import type { Activity } from '../types/types'
+import type { Activity, ActivityStatus } from '../types/types'
 import { connect } from 'react-redux'
 
 interface Props {
     title: string
     activities: Activity[]
+    activityStatus: ActivityStatus
 }
 
 const ActivityList = (props: Props) => {
     const activitiesInList = Object.values(props.activities).filter((activity: Activity) =>
-        activity.status.toLowerCase() === props.title.toLowerCase()
+        activity.status === props.activityStatus
     )
 
     return (

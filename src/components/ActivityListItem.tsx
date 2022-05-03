@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import type { Activity } from '../types/types'
+import { Activity, ActivityStatus } from '../types/types'
 import Modal from 'react-modal';
 import ActivityForm from './ActivityForm'
 import { connect, ConnectedProps } from 'react-redux';
@@ -40,28 +40,28 @@ const ActivityListItem = (props: Props) => {
             </button>
             <button
                 onClick={() => {
-                    props.activityEditedAsync({ ...activity, status: 'backlog' })
+                    props.activityEditedAsync({ ...activity, status: ActivityStatus.Backlog })
                 }}
             >
                 Backlog
             </button>
             <button
                 onClick={() => {
-                    props.activityEditedAsync({ ...activity, status: 'available' })
+                    props.activityEditedAsync({ ...activity, status: ActivityStatus.Available })
                 }}
             >
                 Available
             </button>
             <button
                 onClick={() => {
-                    props.activityEditedAsync({ ...activity, status: 'doing' })
+                    props.activityEditedAsync({ ...activity, status: ActivityStatus.InProgress })
                 }}
             >
-                Doing
+                In progress
             </button>
             <button
                 onClick={() => {
-                    props.activityEditedAsync({ ...activity, status: 'done' })
+                    props.activityEditedAsync({ ...activity, status: ActivityStatus.Done })
                 }}
             >
                 Done
