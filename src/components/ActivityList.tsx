@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
 import ActivityListItem from './ActivityListItem'
-import type { Activity, ActivityStatus } from '../types/types'
+import { Activity, ActivityStatus, DropTypes } from '../types/types'
 import { connect } from 'react-redux'
+import { useDrop } from 'react-dnd'
 
 interface Props {
     title: string
@@ -10,12 +11,22 @@ interface Props {
 }
 
 const ActivityList = (props: Props) => {
+    const [{ item }, drop] = useDrop(() => ({
+        accept: DropTypes.Activity,
+        drop: () => ({ droppedIn: props.activityStatus }),
+        collect: (monitor) => ({
+            item: monitor.getItem()
+        })
+    }),
+        [props.activityStatus]
+    )
+
     const activitiesInList = Object.values(props.activities).filter((activity: Activity) =>
         activity.status === props.activityStatus
     )
 
     return (
-        <div className='activityList'>
+        <div ref={drop} className='activityList'>
             <h2>{props.title}</h2>
             {
                 activitiesInList.map((activity: Activity) =>

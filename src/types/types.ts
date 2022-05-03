@@ -16,6 +16,10 @@ export enum ActivityStatus {
     Done = "DONE",
 }
 
+export enum DropTypes {
+    Activity = "ACTIVITY"
+}
+
 export interface Activity {
     id: string
     title: string
