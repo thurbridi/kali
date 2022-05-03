@@ -42,9 +42,18 @@ export const sourceRemoved = (sourceId: string): Action => ({
     payload: sourceId
 })
 
+// FIXME: I don't like having to mirror the behavior of the reducer in the "database"
 export const sourceRemovedAsync = (sourceId: string) => {
     return (dispatch: AppDispatch) => {
         return window.storageAPI.deleteKey(`state.sources.${sourceId}`)
+            .then(() => window.storageAPI.loadKey('state.activities'))
+            .then((activities) => {
+                for (const key of Object.keys(activities)) {
+                    if (activities[key].sourceId === sourceId) {
+                        window.storageAPI.deleteKey(`state.activities.${key}`)
+                    }
+                }
+            })
             .then(() => dispatch(sourceRemoved(sourceId)))
     }
 }

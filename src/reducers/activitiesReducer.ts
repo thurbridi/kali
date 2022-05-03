@@ -29,6 +29,17 @@ export const activitiesReducer = (state: { [id: string]: Activity } = {}, action
             const activities: { [id: string]: Activity } = action.payload
             return activities
         }
+
+        case 'sources/sourceRemoved': {
+            const sourceId = action.payload
+            const newState = { ...state }
+            for (const key of Object.keys(newState)) {
+                if (newState[key].sourceId === sourceId) {
+                    delete newState[key]
+                }
+            }
+            return newState
+        }
         default: return state
     }
 }
