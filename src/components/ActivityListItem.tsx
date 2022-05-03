@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import type { Activity } from '../types/types'
 import Modal from 'react-modal';
 import ActivityForm from './ActivityForm'
-import { connect } from 'react-redux';
-import { activityEdited, activityRemoved } from '../actions/activities';
+import { connect, ConnectedProps } from 'react-redux';
+import { activityEditedAsync, activityRemovedAsync } from '../actions/activities';
+import { AppDispatch } from '../store/store';
 
 
 
-interface Props {
+interface Props extends PropsFromRedux {
     activity: Activity,
-    dispatch: any
 }
 
 const ActivityListItem = (props: Props) => {
@@ -34,34 +34,34 @@ const ActivityListItem = (props: Props) => {
                 Edit
             </button>
             <button
-                onClick={() => props.dispatch(activityRemoved(activity.id))}
+                onClick={() => props.activityRemovedAsync(activity.id)}
             >
                 Remove
             </button>
             <button
                 onClick={() => {
-                    props.dispatch(activityEdited({ ...activity, status: 'backlog' }))
+                    props.activityEditedAsync({ ...activity, status: 'backlog' })
                 }}
             >
                 Backlog
             </button>
             <button
                 onClick={() => {
-                    props.dispatch(activityEdited({ ...activity, status: 'available' }))
+                    props.activityEditedAsync({ ...activity, status: 'available' })
                 }}
             >
                 Available
             </button>
             <button
                 onClick={() => {
-                    props.dispatch(activityEdited({ ...activity, status: 'doing' }))
+                    props.activityEditedAsync({ ...activity, status: 'doing' })
                 }}
             >
                 Doing
             </button>
             <button
                 onClick={() => {
-                    props.dispatch(activityEdited({ ...activity, status: 'done' }))
+                    props.activityEditedAsync({ ...activity, status: 'done' })
                 }}
             >
                 Done
@@ -74,8 +74,13 @@ const ActivityListItem = (props: Props) => {
 
 }
 
-const mapStateToProps = (state: any) => {
-    return {}
-}
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+    activityRemovedAsync: (id: string) => dispatch(activityRemovedAsync(id)),
+    activityEditedAsync: (activity: Activity) => dispatch(activityEditedAsync(activity))
+})
 
-export default connect(mapStateToProps)(ActivityListItem)
+const connector = connect(undefined, mapDispatchToProps)
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+export default connector(ActivityListItem)
