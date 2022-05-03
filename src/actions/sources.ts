@@ -10,15 +10,16 @@ export const sourceAdded = (source: Source): Action => ({
     payload: source
 })
 
-export const sourceAddedAsync = (sourceData: { title?: string, description?: string } = {}) => {
+export const sourceAddedAsync = (sourceData: Partial<Source> = {}) => {
     return (dispatch: AppDispatch) => {
-        const {
-            title = '',
-            description = ''
-        } = sourceData
-
-        const source: Source = { id: uuidv4(), title, description }
-        return window.storageAPI.storeKey(`state.sources.${source.id}`, source).then(() => { dispatch(sourceAdded(source)) })
+        const source: Source = {
+            id: uuidv4(),
+            title: '',
+            description: '',
+            ...sourceData
+        }
+        return window.storageAPI.storeKey(`state.sources.${source.id}`, source)
+            .then(() => dispatch(sourceAdded(source)))
     }
 }
 
@@ -31,7 +32,8 @@ export const sourceEdited = (source: Source): Action => ({
 
 export const sourceEditedAsync = (source: Source) => {
     return (dispatch: AppDispatch) => {
-        return window.storageAPI.storeKey(`state.sources.${source.id}`, source).then(() => { dispatch(sourceEdited(source)) })
+        return window.storageAPI.storeKey(`state.sources.${source.id}`, source)
+            .then(() => dispatch(sourceEdited(source)))
     }
 }
 
@@ -42,21 +44,19 @@ export const sourceRemoved = (sourceId: string): Action => ({
 
 export const sourceRemovedAsync = (sourceId: string) => {
     return (dispatch: AppDispatch) => {
-        return window.storageAPI.deleteKey(`state.sources.${sourceId}`).then(() => {
-            dispatch(sourceRemoved(sourceId))
-        })
+        return window.storageAPI.deleteKey(`state.sources.${sourceId}`)
+            .then(() => dispatch(sourceRemoved(sourceId)))
     }
 }
 
-const sourcesFetched = (sources: { [id: string]: Source }) => ({
+export const sourcesFetched = (sources: { [id: string]: Source }) => ({
     type: 'sources/sourcesFetched',
     payload: sources
 })
 
 export const sourcesFetchedAsync = () => {
-    return (dispatch: AppDispatch) => {
-        return window.storageAPI.loadKey('state.sources').then((sources) => {
-            dispatch(sourcesFetched(sources))
-        })
+    return async (dispatch: AppDispatch) => {
+        return window.storageAPI.loadKey('state.sources')
+            .then((sources) => dispatch(sourcesFetched(sources)))
     }
 }

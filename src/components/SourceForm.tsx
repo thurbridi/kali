@@ -43,7 +43,7 @@ const SourceForm = (props: Props) => {
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
-    sourceAddedAsync: (source: { title?: string, description?: string }) => dispatch(sourceAddedAsync(source)),
+    sourceAddedAsync: (sourceData: Partial<Source>) => dispatch(sourceAddedAsync(sourceData)),
     sourceEditedAsync: (source: Source) => dispatch(sourceEditedAsync(source))
 })
 
