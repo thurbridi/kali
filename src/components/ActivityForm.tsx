@@ -1,15 +1,14 @@
 import React, { useState } from "react"
 import type { Activity, Source } from '../types/types'
-import { connect } from "react-redux"
-import { activityAdded, activityEdited } from "../actions/activities"
-import { RootState } from "../store/store"
+import { connect, ConnectedProps } from "react-redux"
+import { activityAddedAsync, activityEditedAsync } from "../actions/activities"
+import { AppDispatch } from "../store/store"
 
 
-interface Props {
+interface Props extends PropsFromRedux {
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
     source?: Source
     activity?: Activity
-    dispatch: any
 }
 
 const ActivityForm = (props: Props) => {
@@ -19,7 +18,6 @@ const ActivityForm = (props: Props) => {
     const [title, setTitle] = useState(activity ? activity.title : '')
     const [description, setDescription] = useState(activity ? activity.description : '')
 
-    const action = activity ? activityEdited({ ...activity, title, description }) : activityAdded(title, description, source.id)
 
     const onTitleChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setTitle(event.target.value)
@@ -33,7 +31,7 @@ const ActivityForm = (props: Props) => {
         <form
             className='form'
             onSubmit={(event) => {
-                props.dispatch(action)
+                activity ? props.activityEditedAsync({ ...activity, title, description }) : props.activityAddedAsync({ title, description, sourceId: source.id })
                 props.onSubmit(event)
             }}
         >
@@ -53,8 +51,13 @@ const ActivityForm = (props: Props) => {
     )
 }
 
-const mapStateToProps = (state: RootState) => {
-    return {}
-}
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
+    activityAddedAsync: (activityData: Partial<Activity>) => dispatch(activityAddedAsync(activityData)),
+    activityEditedAsync: (activity: Activity) => dispatch(activityEditedAsync(activity))
+})
 
-export default connect(mapStateToProps)(ActivityForm)
+const connector = connect(undefined, mapDispatchToProps)
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+export default connector(ActivityForm)

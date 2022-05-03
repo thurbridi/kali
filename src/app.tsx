@@ -4,6 +4,7 @@ import KaliApp from './components/KaliApp'
 import { Provider } from 'react-redux'
 import { store } from './store/store'
 import { sourcesFetchedAsync } from './actions/sources'
+import { activitiesFetchedAsync } from './actions/activities'
 
 
 store.subscribe(() => console.log('sources', store.getState().sources))
@@ -21,13 +22,8 @@ store.subscribe(() => {
     console.log(store.getState())
 })
 
-console.log('hey')
-
-// ReactDOM.render(<App />, document.getElementById('root'))
-
-
 ReactDOM.render(<p>Loading...</p>, document.getElementById('root'))
 
-store.dispatch(sourcesFetchedAsync()).then(() => {
-    ReactDOM.render(<App />, document.getElementById('root'))
-})
+store.dispatch(sourcesFetchedAsync())
+    .then(() => store.dispatch(activitiesFetchedAsync()))
+    .then(() => ReactDOM.render(<App />, document.getElementById('root')))
