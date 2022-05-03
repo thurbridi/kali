@@ -24,6 +24,7 @@ store.subscribe(() => {
 
 ReactDOM.render(<p>Loading...</p>, document.getElementById('root'))
 
+// FIXME: dispatching many actions sequentially (https://redux.js.org/style-guide/#avoid-dispatching-many-actions-sequentially)
 store.dispatch(sourcesFetchedAsync())
     .then(() => store.dispatch(activitiesFetchedAsync()))
     .then(() => ReactDOM.render(<App />, document.getElementById('root')))
