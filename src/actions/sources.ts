@@ -1,6 +1,6 @@
 import { Action, Source } from "../types/types";
 import { v4 as uuidv4 } from 'uuid';
-
+import { colorSwatch1 } from "../colorSwatches";
 import { AppDispatch } from "../store/store";
 
 
@@ -11,11 +11,12 @@ export const sourceAdded = (source: Source): Action => ({
 })
 
 export const sourceAddedAsync = (sourceData: Partial<Source> = {}) => {
-    return (dispatch: AppDispatch) => {
+    return async (dispatch: AppDispatch) => {
         const source: Source = {
             id: uuidv4(),
             title: '',
             description: '',
+            color: '#ffffff',
             ...sourceData
         }
         return window.storageAPI.storeKey(`state.sources.${source.id}`, source)
@@ -31,7 +32,7 @@ export const sourceEdited = (source: Source): Action => ({
 })
 
 export const sourceEditedAsync = (source: Source) => {
-    return (dispatch: AppDispatch) => {
+    return async (dispatch: AppDispatch) => {
         return window.storageAPI.storeKey(`state.sources.${source.id}`, source)
             .then(() => dispatch(sourceEdited(source)))
     }
@@ -44,7 +45,7 @@ export const sourceRemoved = (sourceId: string): Action => ({
 
 // FIXME: I don't like having to mirror the behavior of the reducer in the "database"
 export const sourceRemovedAsync = (sourceId: string) => {
-    return (dispatch: AppDispatch) => {
+    return async (dispatch: AppDispatch) => {
         return window.storageAPI.deleteKey(`state.sources.${sourceId}`)
             .then(() => window.storageAPI.loadKey('state.activities'))
             .then((activities) => {

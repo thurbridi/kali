@@ -4,7 +4,7 @@ import { Source, Activity, ActivityStatus } from '../types/types'
 import Modal from 'react-modal'
 import SourceForm from "./SourceForm"
 import { connect } from "react-redux"
-import { RootState } from "../store/store"
+import { AppState } from "../store/store"
 
 
 const SourceList = (props: any) => {
@@ -43,7 +43,7 @@ const SourceList = (props: any) => {
     )
 }
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = (state: AppState) => {
     return {
         sources: state.sources,
         activities: state.activities,

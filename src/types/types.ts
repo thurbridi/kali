@@ -7,6 +7,7 @@ export interface Source {
     id: string
     title: string
     description: string
+    color: Color
 }
 
 export enum ActivityStatus {
@@ -33,3 +34,7 @@ export interface Activity {
     isArchived: boolean
     rank: number
 }
+
+export type HEX = `#${string}`
+
+export type Color = HEX

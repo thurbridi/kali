@@ -4,9 +4,8 @@ import Modal from 'react-modal';
 import ActivityForm from './ActivityForm'
 import { connect, ConnectedProps } from 'react-redux';
 import { activityEditedAsync, activityRemovedAsync } from '../actions/activities';
-import { AppDispatch } from '../store/store';
+import { AppDispatch, AppState } from '../store/store';
 import { useDrag } from 'react-dnd';
-
 
 
 interface Props extends PropsFromRedux {
@@ -58,6 +57,7 @@ const ActivityListItem = (props: Props) => {
     return (
         <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }} className='activityList__item'>
             <div onClick={(event) => { event.stopPropagation(); setOpenActivity(true) }}>
+                <div className='activity-card__source-color' style={{ background: props.sourceColor }} />
                 <p className='title'>{activity.title}</p>
                 {activity.description && <p>{activity.description}</p>}
                 {activity.dueDate && <p>Due: {activity.dueDate}</p>}
@@ -77,12 +77,17 @@ const ActivityListItem = (props: Props) => {
 
 }
 
+// FIXME: ownProps: any = bad
+const mapStateToProps = (state: AppState, ownProps: any) => ({
+    sourceColor: state.sources[ownProps.activity.sourceId].color
+})
+
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
     activityRemovedAsync: (id: string) => dispatch(activityRemovedAsync(id)),
     activityEditedAsync: (activity: Activity) => dispatch(activityEditedAsync(activity))
 })
 
-const connector = connect(undefined, mapDispatchToProps)
+const connector = connect(mapStateToProps, mapDispatchToProps)
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 

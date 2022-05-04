@@ -7,7 +7,9 @@ $thin-weight:     100
 $light-weight:    300
 $regular-weight:   400
 $medium-weight: 500
+
 $font-color: #646464
+$background-color: #fafafa
 
 @font-face
     font-family: Overpass Thin
@@ -36,7 +38,7 @@ html
     color: $font-color
 
 body
-    background: #fafafa
+    background: $background-color
     font-size: $m-size
     height: 100%
     margin: 0
@@ -66,7 +68,7 @@ body
     overflow: hidden
     margin: $s-size
     border-radius: $s-size
-    box-shadow: .2rem .2rem .5rem darken(#fafafa, 50%)
+    box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
 
 .activityList__title
     padding: $s-size
@@ -80,21 +82,33 @@ body
     margin-bottom: 1.2rem
     padding: $s-size
     border-radius: $s-size
-    box-shadow: .2rem .2rem .5rem darken(#fafafa, 50%)
+    box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
     min-width: 0
 
 .sourceList__item
     margin-bottom: 1.2rem
     border-radius: $s-size
-    box-shadow: .2rem .2rem .5rem darken(#fafafa, 50%)
+    box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
 
 .source-card__banner
     height: $l-size
     border-radius: $s-size $s-size 0 0 
-    background: #0068e1
 
 .source-card__content
     padding: 0 $s-size $s-size $s-size
+
+.source-form__color-banner
+    height: 10rem
+    border-radius: $s-size $s-size 0 0 
+
+    display: flex
+    justify-content: flex-end
+    align-items: flex-end
+
+.activity-card__source-color
+    border-radius: 2rem
+    height: 10px
+    width: 30px
 
 form
     display: flex
@@ -110,14 +124,14 @@ p.title
     font-family: Overpass Regular
 
 button
-    color: #fafafa
+    color: $background-color
     background: #2a2a2a
     margin: .4rem
     border: none
     border-radius: .4rem
 
 button:hover
-    box-shadow: .2rem .2rem .5rem darken(#fafafa, 50%)
+    box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
 
 input
     padding: $s-size $m-size
@@ -147,6 +161,7 @@ textarea.detail
     margin-right: auto
     padding: $s-size
     width: 40%
+    background: $background-color
 
 ::-webkit-scrollbar 
     width: $s-size

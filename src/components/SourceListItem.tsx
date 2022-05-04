@@ -29,7 +29,7 @@ const SourceListItem = (props: Props) => {
 
     return (
         <div className='sourceList__item' >
-            <div className="source-card__banner" />
+            <div className="source-card__banner" style={{ "background": props.source.color }} />
             <div className="source-card__content">
                 <div onClick={(e) => { e.stopPropagation(); setOpen(true) }}>
                     <p>{props.source.title}</p>
