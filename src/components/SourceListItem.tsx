@@ -28,12 +28,15 @@ const SourceListItem = (props: Props) => {
     }
 
     return (
-        <div className='sourceList__item'>
-            <p>{props.source.title}</p>
-            <p>{props.numCompletedActivities}/{props.numActivities} Completed</p>
-            <button onClick={() => setOpen(true)}>Edit Source</button>
-            <button onClick={onRemove}>Remove Source</button>
-            <button onClick={() => setOpenActivity(true)}>Add activity</button>
+        <div className='sourceList__item' >
+            <div onClick={(e) => { e.stopPropagation(); setOpen(true) }}>
+                <p>{props.source.title}</p>
+                <p>{props.numCompletedActivities}/{props.numActivities} Completed</p>
+            </div>
+            <div>
+                <button onClick={onRemove}>Remove Source</button>
+                <button onClick={() => setOpenActivity(true)}>Add activity</button>
+            </div>
             <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
                 <SourceForm onSubmit={onSubmit} sourceItem={props.source} />
             </Modal>

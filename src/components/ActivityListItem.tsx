@@ -57,19 +57,18 @@ const ActivityListItem = (props: Props) => {
 
     return (
         <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }} className='activityList__item'>
-            <h4>{activity.title}</h4>
-            {activity.description && <p>{activity.description}</p>}
-            {activity.dueDate && <p>Due: {activity.dueDate}</p>}
-            <button
-                onClick={() => setOpenActivity(true)}
-            >
-                Edit
-            </button>
-            <button
-                onClick={() => props.activityRemovedAsync(activity.id)}
-            >
-                Remove
-            </button>
+            <div onClick={(event) => { event.stopPropagation(); setOpenActivity(true) }}>
+                <h4>{activity.title}</h4>
+                {activity.description && <p>{activity.description}</p>}
+                {activity.dueDate && <p>Due: {activity.dueDate}</p>}
+            </div>
+            <div>
+                <button
+                    onClick={() => props.activityRemovedAsync(activity.id)}
+                >
+                    Remove
+                </button>
+            </div>
             <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
                 <ActivityForm onSubmit={onSubmit} activity={activity} />
             </Modal>
