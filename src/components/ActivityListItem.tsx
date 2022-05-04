@@ -10,6 +10,7 @@ import { useDrag } from 'react-dnd';
 
 interface Props extends PropsFromRedux {
     activity: Activity,
+    hideDetails?: boolean,
 }
 
 interface DropResult {
@@ -22,7 +23,7 @@ interface ActivityDropResult extends DropResult {
 }
 
 const ActivityListItem = (props: Props) => {
-
+    const { hideDetails = false } = props
     const [openActivity, setOpenActivity] = useState(false)
     const [{ isDragging }, drag] = useDrag(() => ({
         type: DropTypes.Activity,
@@ -59,20 +60,13 @@ const ActivityListItem = (props: Props) => {
             <div onClick={(event) => { event.stopPropagation(); setOpenActivity(true) }}>
                 <div className='activity-card__source-color' style={{ background: props.sourceColor }} />
                 <p className='title'>{activity.title}</p>
-                {activity.description && <p>{activity.description}</p>}
+                {(activity.description && !hideDetails) && <p>{activity.description}</p>}
                 {activity.dueDate && <p>Due: {activity.dueDate}</p>}
-            </div>
-            <div>
-                <button
-                    onClick={() => props.activityRemovedAsync(activity.id)}
-                >
-                    Remove
-                </button>
             </div>
             <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
                 <ActivityForm onSubmit={onSubmit} activity={activity} />
             </Modal>
-        </div>
+        </div >
     )
 
 }

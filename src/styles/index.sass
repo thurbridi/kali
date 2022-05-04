@@ -10,6 +10,7 @@ $medium-weight: 500
 
 $font-color: #646464
 $background-color: #fafafa
+$caution-color: #FF311F
 
 @font-face
     font-family: Overpass Thin
@@ -122,11 +123,15 @@ p.title
     font-family: Overpass Regular
 
 button
+    font-famili: Overpass Medium
     color: $background-color
     background: #2a2a2a
     margin: .4rem
     border: none
     border-radius: .4rem
+
+.button--cautious
+    background: $caution-color
 
 button:hover
     box-shadow: .2rem .2rem .5rem darken($background-color, 50%)

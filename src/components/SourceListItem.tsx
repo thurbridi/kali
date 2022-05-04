@@ -6,7 +6,7 @@ import { sourceRemovedAsync } from "../actions/sources";
 import { connect, ConnectedProps } from "react-redux";
 import { AppDispatch } from "../store/store";
 
-interface Props extends PropsFromRedux {
+interface Props {
     source: Source,
     numActivities: number,
     numCompletedActivities: number,
@@ -21,10 +21,6 @@ const SourceListItem = (props: Props) => {
         setOpen(false)
     }
 
-    const onRemove = () => {
-        props.sourceRemovedAsync(props.source.id)
-    }
-
     return (
         <div className='sourceList__item' >
             <div className="source-card__banner" style={{ "background": props.source.color }} />
@@ -32,9 +28,6 @@ const SourceListItem = (props: Props) => {
                 <div onClick={(e) => { e.stopPropagation(); setOpen(true) }}>
                     <p>{props.source.title}</p>
                     <p>{props.numCompletedActivities}/{props.numActivities} Completed</p>
-                </div>
-                <div>
-                    <button onClick={onRemove}>Remove</button>
                 </div>
                 <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
                     <SourceForm onSubmit={onSubmit} sourceItem={props.source} />
@@ -44,12 +37,7 @@ const SourceListItem = (props: Props) => {
     )
 }
 
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-    sourceRemovedAsync: (id: string) => dispatch(sourceRemovedAsync(id))
-})
+const connector = connect(undefined, undefined)
 
-const connector = connect(undefined, mapDispatchToProps)
-
-type PropsFromRedux = ConnectedProps<typeof connector>
 
 export default connector(SourceListItem)

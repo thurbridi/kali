@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Activity, Source } from '../types/types';
 import { connect, ConnectedProps } from 'react-redux'
-import { sourceAddedAsync, sourceEditedAsync } from '../actions/sources';
+import { sourceAddedAsync, sourceEditedAsync, sourceRemovedAsync } from '../actions/sources';
 import { AppDispatch, AppState } from '../store/store';
 import { colorSwatch1 } from '../colorSwatches';
 import ActivityListItem from './ActivityListItem';
@@ -42,7 +42,7 @@ const SourceForm = (props: Props) => {
     }
 
     return (
-        <div>
+        <div >
             <form onSubmit={(event) => {
                 props.sourceItem ? props.sourceEditedAsync({ ...props.sourceItem, title, description, color }) : props.sourceAddedAsync({ title, description, color })
                 props.onSubmit(event)
@@ -74,17 +74,22 @@ const SourceForm = (props: Props) => {
             </form>
             {
                 props.sourceItem ?
-                    <div>
+                    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <h3>Activities</h3>
                             <button onClick={() => setOpenActivity(true)}>+</button>
                         </div>
-                        <div className='activityList__content'>
+                        <div>
                             {
                                 props.sourceActivities.map((activity: Activity) =>
-                                    <ActivityListItem key={activity.id} activity={activity} />
+                                    <ActivityListItem key={activity.id} activity={activity} hideDetails={true} />
                                 )
                             }
+                        </div>
+                        <div style={{ alignSelf: "center" }}>
+                            <button className="button--cautious" onClick={() => {
+                                props.sourceRemovedAsync(props.sourceItem.id)
+                            }}>Remove Source</button>
                         </div>
                         <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
                             <ActivityForm source={props.sourceItem} onSubmit={onSubmit} />
@@ -106,6 +111,7 @@ const mapStateToProps = (state: AppState, props: any) => {
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
+    sourceRemovedAsync: (id: string) => dispatch(sourceRemovedAsync(id)),
     sourceAddedAsync: (sourceData: Partial<Source>) => dispatch(sourceAddedAsync(sourceData)),
     sourceEditedAsync: (source: Source) => dispatch(sourceEditedAsync(source))
 })
