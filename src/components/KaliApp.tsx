@@ -9,11 +9,15 @@ const KaliApp = () => {
     return (
         <DndProvider backend={HTML5Backend}>
             <div className='workspace'>
-                <SourceList />
-                <ActivityList title='Backlog' activityStatus={ActivityStatus.Backlog} />
-                <ActivityList title='Available' activityStatus={ActivityStatus.Available} />
-                <ActivityList title='In progress' activityStatus={ActivityStatus.InProgress} />
-                <ActivityList title='Done' activityStatus={ActivityStatus.Done} />
+                <div className='sidebar'>
+                    <SourceList />
+                </div>
+                <div className='lists'>
+                    <ActivityList title='Backlog' activityStatus={ActivityStatus.Backlog} />
+                    <ActivityList title='Available' activityStatus={ActivityStatus.Available} />
+                    <ActivityList title='In progress' activityStatus={ActivityStatus.InProgress} />
+                    <ActivityList title='Done' activityStatus={ActivityStatus.Done} />
+                </div>
             </div >
         </DndProvider>
     )

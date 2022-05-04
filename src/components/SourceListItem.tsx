@@ -29,22 +29,25 @@ const SourceListItem = (props: Props) => {
 
     return (
         <div className='sourceList__item' >
-            <div onClick={(e) => { e.stopPropagation(); setOpen(true) }}>
-                <p>{props.source.title}</p>
-                <p>{props.numCompletedActivities}/{props.numActivities} Completed</p>
-            </div>
-            <div>
-                <button onClick={onRemove}>Remove Source</button>
-                <button onClick={() => setOpenActivity(true)}>Add activity</button>
-            </div>
-            <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
-                <SourceForm onSubmit={onSubmit} sourceItem={props.source} />
-            </Modal>
+            <div className="source-card__banner" />
+            <div className="source-card__content">
+                <div onClick={(e) => { e.stopPropagation(); setOpen(true) }}>
+                    <p>{props.source.title}</p>
+                    <p>{props.numCompletedActivities}/{props.numActivities} Completed</p>
+                </div>
+                <div>
+                    <button onClick={onRemove}>Remove Source</button>
+                    <button onClick={() => setOpenActivity(true)}>Add activity</button>
+                </div>
+                <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
+                    <SourceForm onSubmit={onSubmit} sourceItem={props.source} />
+                </Modal>
 
-            <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
-                <ActivityForm source={props.source} onSubmit={onSubmit} />
-            </Modal>
-        </div>
+                <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
+                    <ActivityForm source={props.source} onSubmit={onSubmit} />
+                </Modal>
+            </div>
+        </div >
     )
 }
 

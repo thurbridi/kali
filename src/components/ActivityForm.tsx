@@ -29,19 +29,20 @@ const ActivityForm = (props: Props) => {
 
     return (
         <form
-            className='form'
             onSubmit={(event) => {
                 activity ? props.activityEditedAsync({ ...activity, title, description }) : props.activityAddedAsync({ title, description, sourceId: source.id })
                 props.onSubmit(event)
             }}
         >
             <input
+                className="title"
                 type='text'
                 placeholder='Title'
                 value={title}
                 onChange={onTitleChange}
             />
             <textarea
+                className="detail"
                 placeholder='Description'
                 value={description}
                 onChange={onDescriptionChange}

@@ -27,12 +27,14 @@ const ActivityList = (props: Props) => {
 
     return (
         <div ref={drop} className='activityList'>
-            <h2>{props.title}</h2>
-            {
-                activitiesInList.map((activity: Activity) =>
-                    <ActivityListItem key={activity.id} activity={activity} />
-                )
-            }
+            <h3 className='activityList__title'>{props.title}</h3>
+            <div className='activityList__content'>
+                {
+                    activitiesInList.map((activity: Activity) =>
+                        <ActivityListItem key={activity.id} activity={activity} />
+                    )
+                }
+            </div>
         </div>
     )
 }

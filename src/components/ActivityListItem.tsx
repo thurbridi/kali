@@ -58,7 +58,7 @@ const ActivityListItem = (props: Props) => {
     return (
         <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }} className='activityList__item'>
             <div onClick={(event) => { event.stopPropagation(); setOpenActivity(true) }}>
-                <h4>{activity.title}</h4>
+                <p className='title'>{activity.title}</p>
                 {activity.description && <p>{activity.description}</p>}
                 {activity.dueDate && <p>Due: {activity.dueDate}</p>}
             </div>

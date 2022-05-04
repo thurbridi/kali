@@ -19,8 +19,10 @@ const SourceList = (props: any) => {
 
     return (
         <div>
-            <h3>Sources</h3>
-            <button onClick={() => setOpen(true)}>Add Source</button>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h3>Sources</h3>
+                <button onClick={() => setOpen(true)}>+</button>
+            </div>
             {
                 Object.values(props.sources).map((source: Source) => {
                     const sourceActivities = Object.values(props.activities).filter((activity: Activity) => activity.sourceId === source.id)

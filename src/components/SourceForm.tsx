@@ -22,17 +22,19 @@ const SourceForm = (props: Props) => {
     }
 
     return (
-        <form className='form' onSubmit={(event) => {
+        <form onSubmit={(event) => {
             props.sourceItem ? props.sourceEditedAsync({ ...props.sourceItem, title, description }) : props.sourceAddedAsync({ title, description })
             props.onSubmit(event)
         }}>
             <input
+                className='title'
                 type='text'
                 value={title}
                 onChange={onTitleChange}
                 placeholder='Source title'
             />
             <textarea
+                className='detail'
                 value={description}
                 onChange={onDescriptionChange}
                 placeholder='Description'
