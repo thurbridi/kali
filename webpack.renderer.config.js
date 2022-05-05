@@ -10,7 +10,6 @@ module.exports = {
     module: {
         rules,
     },
-    devtool: "nosources-source-map",
     plugins: plugins,
     resolve: {
         extensions: ['.js', '.ts', '.jsx', '.tsx', '.css']

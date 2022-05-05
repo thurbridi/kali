@@ -1,6 +1,5 @@
 import { Action, Source } from "../types/types";
 import { v4 as uuidv4 } from 'uuid';
-import { colorSwatch1 } from "../colorSwatches";
 import { AppDispatch } from "../store/store";
 
 
