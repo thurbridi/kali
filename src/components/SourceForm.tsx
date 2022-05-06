@@ -14,7 +14,7 @@ interface Props extends PropsFromRedux {
 }
 
 const SourceForm = (props: Props) => {
-    const colorIdx = Math.floor(Math.random() * (colorSwatch1.length - 1))
+    const colorIdx = Math.floor(Math.random() * (colorSwatch1.length))
     const defaultColor = colorSwatch1[colorIdx]
 
     const [openActivity, setOpenActivity] = useState(false)
@@ -23,7 +23,6 @@ const SourceForm = (props: Props) => {
         event.preventDefault()
         setOpenActivity(false)
     }
-
 
     const [title, setTitle] = useState(props.sourceItem ? props.sourceItem.title : '')
     const [description, setDescription] = useState(props.sourceItem ? props.sourceItem.description : '')

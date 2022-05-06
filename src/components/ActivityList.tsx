@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import ActivityListItem from './ActivityListItem'
-import { Activity, ActivityStatus, DropTypes } from '../types/types'
+import { Activity, ActivityStatus, DragDropTypes } from '../types/types'
 import { connect } from 'react-redux'
 import { useDrop } from 'react-dnd'
 
@@ -12,7 +12,7 @@ interface Props {
 
 const ActivityList = (props: Props) => {
     const [{ item }, drop] = useDrop(() => ({
-        accept: DropTypes.Activity,
+        accept: DragDropTypes.Activity,
         drop: () => ({ droppedIn: props.activityStatus }),
         collect: (monitor) => ({
             item: monitor.getItem()

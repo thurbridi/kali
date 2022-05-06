@@ -17,7 +17,7 @@ export enum ActivityStatus {
     Done = "DONE",
 }
 
-export enum DropTypes {
+export enum DragDropTypes {
     Activity = "ACTIVITY"
 }
 

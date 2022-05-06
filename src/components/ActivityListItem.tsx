@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Activity, ActivityStatus, DropTypes } from '../types/types'
+import { Activity, ActivityStatus, DragDropTypes } from '../types/types'
 import Modal from 'react-modal';
 import ActivityForm from './ActivityForm'
 import { connect, ConnectedProps } from 'react-redux';
@@ -25,9 +25,9 @@ interface ActivityDropResult extends DropResult {
 const ActivityListItem = (props: Props) => {
     const { hideDetails = false } = props
     const [openActivity, setOpenActivity] = useState(false)
-    const [{ isDragging }, drag] = useDrag(() => ({
-        type: DropTypes.Activity,
-        item: { id: props.activity.id },
+    const [{ isDragging }, drag] = useDrag({
+        type: DragDropTypes.Activity,
+        item: () => ({ id: props.activity.id }),
         end: (item, monitor) => {
             if (monitor.didDrop()) {
                 const {
@@ -43,9 +43,9 @@ const ActivityListItem = (props: Props) => {
         collect: (monitor) => ({
             isDragging: monitor.isDragging()
         })
-    }),
-        [props.activity.id]
-    )
+    })
+
+
 
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
