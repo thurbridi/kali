@@ -1,8 +1,9 @@
 import React, { useState } from "react"
-import type { Activity, Source } from '../types/types'
+import { Activity, ActivityStatus, Source } from '../types/types'
 import { connect, ConnectedProps } from "react-redux"
 import { activityAddedAsync, activityEditedAsync, activityRemovedAsync } from "../actions/activities"
-import { AppDispatch } from "../store/store"
+import { AppDispatch, AppState } from "../store/store"
+import { stat } from "original-fs"
 
 
 interface Props extends PropsFromRedux {
@@ -31,7 +32,14 @@ const ActivityForm = (props: Props) => {
         <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <form
                 onSubmit={(event) => {
-                    activity ? props.activityEditedAsync({ ...activity, title, description }) : props.activityAddedAsync({ title, description, sourceId: source.id })
+                    activity ?
+                        props.activityEditedAsync({ ...activity, title, description })
+                        : props.activityAddedAsync({
+                            title,
+                            description,
+                            rank: props.nextRank,
+                            sourceId: source.id
+                        })
                     props.onSubmit(event)
                 }}
             >
@@ -62,13 +70,17 @@ const ActivityForm = (props: Props) => {
     )
 }
 
+const mapStateToProps = (state: AppState) => ({
+    nextRank: Object.values(state.activities).filter((activity) => activity.status === ActivityStatus.Backlog).length
+})
+
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
     activityRemovedAsync: (id: string) => dispatch(activityRemovedAsync(id)),
     activityAddedAsync: (activityData: Partial<Activity>) => dispatch(activityAddedAsync(activityData)),
     activityEditedAsync: (activity: Activity) => dispatch(activityEditedAsync(activity))
 })
 
-const connector = connect(undefined, mapDispatchToProps)
+const connector = connect(mapStateToProps, mapDispatchToProps)
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 

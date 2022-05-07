@@ -30,15 +30,16 @@ export const activityAddedAsync = (activityData: Partial<Activity> = {}) => {
     }
 }
 
-export const activityEdited = (activity: Activity) => ({
+export const activityEdited = (activity: Partial<Activity>) => ({
     type: 'activities/activityEdited',
     payload: activity
 })
 
-export const activityEditedAsync = (activity: Activity) => {
+export const activityEditedAsync = (activityData: Partial<Activity>) => {
     return (dispatch: AppDispatch) => {
-        return window.storageAPI.storeKey(`state.activities.${activity.id}`, activity)
-            .then(() => dispatch(activityAdded(activity)))
+        return window.storageAPI.loadKey(`state.activities.${activityData.id}`)
+            .then((activity) => window.storageAPI.storeKey(`state.activities.${activity.id}`, { ...activity, ...activityData }))
+            .then(() => dispatch(activityEdited(activityData)))
     }
 }
 

@@ -12,10 +12,10 @@ export const activitiesReducer = (state: { [id: string]: Activity } = {}, action
         }
         // Semantically different from activityAdded
         case 'activities/activityEdited': {
-            const activity: Activity = action.payload
+            const activityData: Partial<Activity> = action.payload
             return {
                 ...state,
-                [activity.id]: activity
+                [activityData.id]: { ...state[activityData.id], ...activityData }
             }
         }
 
