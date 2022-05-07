@@ -1,32 +1,35 @@
-import { Action, Activity, ActivityStatus } from "../types/types";
+import { Action, Activity } from "../types/types";
 import { v4 as uuidv4 } from 'uuid';
 
-import { AppDispatch } from "../store/store";
+import { AppDispatch, AppState } from "../store/store";
 
-export const activityAdded = (activity: Activity): Action => ({
-    type: 'activities/activityAdded',
-    payload: activity
-})
-
-export const activityAddedAsync = (activityData: Partial<Activity> = {}) => {
-    // Activity defaults
+export const activityAdded = (activityData: Partial<Activity>): Action => {
     const activity: Activity = {
-        id: uuidv4(),
+        id: undefined,
         title: '',
         description: '',
         startDate: undefined,
         endDate: undefined,
         dueDate: undefined,
         sourceId: undefined,
-        status: ActivityStatus.Backlog,
-        rank: undefined,
+        statusId: undefined,
         isArchived: false,
-        tags: undefined,
+        tagIds: undefined,
         ...activityData
     }
-    return (dispatch: AppDispatch) => {
-        return window.storageAPI.storeKey(`state.activities.${activity.id}`, activity)
-            .then(() => dispatch(activityAdded(activity)))
+
+    return {
+        type: 'activities/activityAdded',
+        payload: activity
+    }
+}
+
+export const activityAddedAsync = (activityData: Partial<Activity> = {}) => {
+    return async (dispatch: AppDispatch, getState: () => AppState) => {
+        const id = uuidv4()
+        dispatch(activityAdded({ ...activityData, id }))
+        const activity = getState().activities[id]
+        await window.storageAPI.storeKey(`state.activities.${activity.id}`, activity)
     }
 }
 
@@ -36,33 +39,42 @@ export const activityEdited = (activity: Partial<Activity>) => ({
 })
 
 export const activityEditedAsync = (activityData: Partial<Activity>) => {
-    return (dispatch: AppDispatch) => {
-        return window.storageAPI.loadKey(`state.activities.${activityData.id}`)
-            .then((activity) => window.storageAPI.storeKey(`state.activities.${activity.id}`, { ...activity, ...activityData }))
-            .then(() => dispatch(activityEdited(activityData)))
+    return async (dispatch: AppDispatch, getState: () => AppState) => {
+        dispatch(activityEdited(activityData))
+        const activity = getState().activities[activityData.id]
+        await window.storageAPI.storeKey(`state.activities.${activity.id}`, activity)
     }
 }
 
-export const activityRemoved = (id: string) => ({
+export const activityMoved = (id: Activity['id'], fromStatus: string, toStatus: string, fromIdx: number, toIdx: number) => ({
+    type: 'activitites/activityMoved',
+    payload: {
+        id,
+        fromStatus,
+        toStatus,
+        fromIdx,
+        toIdx
+    }
+})
+
+export const activityMovedAsync = (id: Activity['id'], fromStatus: string, toStatus: string, fromIdx: number, toIdx: number) => {
+    return async (dispatch: AppDispatch, getState: () => AppState) => {
+        dispatch(activityMoved(id, fromStatus, toStatus, fromIdx, toIdx))
+        await window.storageAPI.storeKey('state', getState())
+    }
+}
+
+export const activityRemoved = (id: string, statusId: string) => ({
     type: 'activities/activityRemoved',
-    payload: id
-})
-
-export const activityRemovedAsync = (id: string) => {
-    return async (dispatch: AppDispatch) => {
-        return window.storageAPI.deleteKey(`state.activities.${id}`)
-            .then(() => dispatch(activityRemoved(id)))
+    payload: {
+        id,
+        statusId
     }
-}
-
-const activitiesFetched = (activities: { [id: string]: Activity }) => ({
-    type: 'activities/activitiesFetched',
-    payload: activities
 })
 
-export const activitiesFetchedAsync = () => {
-    return async (dispatch: AppDispatch) => {
-        return window.storageAPI.loadKey('state.activities')
-            .then((activities) => dispatch(activitiesFetched(activities)))
+export const activityRemovedAsync = (id: string, statusId: string) => {
+    return async (dispatch: AppDispatch, getState: () => AppState) => {
+        dispatch(activityRemoved(id, statusId))
+        await window.storageAPI.storeKey('state', getState())
     }
 }

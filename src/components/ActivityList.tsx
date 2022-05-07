@@ -1,43 +1,54 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import ActivityListItem from './ActivityListItem'
-import { Activity, ActivityStatus, DragDropTypes } from '../types/types'
-import { connect, ConnectedProps } from 'react-redux'
+import { Activity, DragTypes } from '../types/types'
+import { connect, ConnectedProps, useSelector } from 'react-redux'
 import { useDrop } from 'react-dnd'
-import { AppDispatch } from '../store/store'
-import { activityEdited } from '../actions/activities'
+import { AppState } from '../store/store'
+
 
 interface Props extends PropsFromRedux {
     title: string
-    activities: Activity[]
-    activityStatus: ActivityStatus
+    activityStatus: string
 }
+
+const mapStateToProps = (state: AppState, props: any) => ({
+    activities: state.statusLists[props.activityStatus].activityIds
+        .map((id) => state.activities[id])
+})
+
 
 const ActivityList = (props: Props) => {
     const [{ item }, drop] = useDrop(() => ({
-        accept: DragDropTypes.Activity,
+        accept: DragTypes.Activity,
         drop: (item, monitor) => {
             if (monitor.didDrop()) {
                 return
             }
-            return { status: props.activityStatus }
+            console.log(props.activities.length)
+            return {
+                toStatus: props.activityStatus,
+                toIdx: props.activities.length
+            }
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),
             item: monitor.getItem()
         })
-    }))
+    }), [])
 
-    const activitiesInList = Object.values(props.activities)
-        .filter((activity: Activity) => activity.status === props.activityStatus)
-        .sort((a, b) => a.rank - b.rank)
 
     return (
         <div ref={drop} className='activityList'>
             <h3 className='activityList__title'>{props.title}</h3>
             <div className='activityList__content'>
                 {
-                    activitiesInList.map((activity: Activity, idx: number) =>
-                        <ActivityListItem key={activity.id} activity={activity} rank={idx} />
+                    props.activities.map((activity: Activity, index: number) =>
+                        <ActivityListItem
+                            key={activity.id}
+                            activity={activity}
+                            showDetails={true}
+                            index={index}
+                        />
                     )
                 }
             </div>
@@ -45,17 +56,7 @@ const ActivityList = (props: Props) => {
     )
 }
 
-const mapStateToProps = (state: any) => {
-    return {
-        activities: state.activities
-    }
-}
-
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
-    activityEdited: (activityData: Partial<Activity>) => dispatch(activityEdited(activityData))
-})
-
-const connector = connect(mapStateToProps, mapDispatchToProps)
+const connector = connect(mapStateToProps)
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 

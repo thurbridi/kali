@@ -57,15 +57,3 @@ export const sourceRemovedAsync = (sourceId: string) => {
             .then(() => dispatch(sourceRemoved(sourceId)))
     }
 }
-
-export const sourcesFetched = (sources: { [id: string]: Source }) => ({
-    type: 'sources/sourcesFetched',
-    payload: sources
-})
-
-export const sourcesFetchedAsync = () => {
-    return async (dispatch: AppDispatch) => {
-        return window.storageAPI.loadKey('state.sources')
-            .then((sources) => dispatch(sourcesFetched(sources)))
-    }
-}

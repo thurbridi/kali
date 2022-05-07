@@ -7,7 +7,20 @@ export interface Source {
     id: string
     title: string
     description: string
-    color: Color
+    color: HEX
+}
+
+export interface StatusList {
+    status: string
+    isInitial: boolean
+    isTerminal: boolean
+    activityIds: Activity['id'][]
+}
+
+export interface Tag {
+    id: string
+    name: string
+    color: HEX
 }
 
 export enum ActivityStatus {
@@ -17,7 +30,8 @@ export enum ActivityStatus {
     Done = "DONE",
 }
 
-export enum DragDropTypes {
+
+export enum DragTypes {
     Activity = "ACTIVITY"
 }
 
@@ -25,14 +39,13 @@ export interface Activity {
     id: string
     title: string
     description: string
-    tags: string[]
+    tagIds: Tag['id'][]
     startDate: string | undefined
     endDate: string | undefined
     dueDate: string | undefined
     sourceId: string
-    status: ActivityStatus
+    statusId: string
     isArchived: boolean
-    rank: number
 }
 
 export type HEX = `#${string}`

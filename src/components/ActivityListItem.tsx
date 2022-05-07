@@ -1,48 +1,49 @@
 import React, { useRef, useState } from 'react'
-import { Activity, ActivityStatus, DragDropTypes } from '../types/types'
+import { Activity, ActivityStatus, DragTypes } from '../types/types'
 import Modal from 'react-modal';
 import ActivityForm from './ActivityForm'
 import { connect, ConnectedProps } from 'react-redux';
-import { activityEdited, activityEditedAsync, activityRemovedAsync } from '../actions/activities';
+import { activityEdited, activityEditedAsync, activityMoved, activityMovedAsync, activityRemovedAsync } from '../actions/activities';
 import { AppDispatch, AppState } from '../store/store';
 import { useDrag, useDrop } from 'react-dnd';
 
 
 interface Props extends PropsFromRedux {
-    activity: Activity,
-    hideDetails?: boolean,
-    rank: number
+    activity: Activity
+    showStatus?: boolean
+    showDetails?: boolean
+    index: number
+}
+
+interface DropResult {
+    id?: Activity['id']
+    toStatus: string,
+    toIdx: number
 }
 
 const ActivityListItem = (props: Props) => {
-    const { activity, hideDetails = false } = props
+    const { activity, showStatus, showDetails } = props
     const [openActivity, setOpenActivity] = useState(false)
+
     const ref = useRef<HTMLDivElement>(null)
     const [{ isDragging }, drag] = useDrag({
-        type: DragDropTypes.Activity,
+        type: DragTypes.Activity,
         item: {
             id: activity.id,
-            rank: props.rank,
-            status: activity.status,
+            fromStatus: activity.statusId,
+            fromIdx: props.index
         },
         end: (item, monitor) => {
             if (monitor.didDrop()) {
-                const dropResult = monitor.getDropResult<{ id: string, rank: number, status: ActivityStatus }>()
-                if (dropResult.status !== item.status) {
-                    props.activityEditedAsync({ id: activity.id, status: dropResult.status })
-                } else {
-                    if (dropResult.id) {
-                        if (dropResult.id === item.id) {
-                            return
-                        }
+                const { id, fromStatus, fromIdx } = item
+                const { toStatus, toIdx } = monitor.getDropResult() as DropResult
 
-                        console.log(item)
-                        console.log(dropResult)
-
-                        props.activityEditedAsync({ id: dropResult.id, rank: item.rank })
-                        props.activityEditedAsync({ id: item.id, rank: dropResult.rank })
-                    }
+                if (fromStatus === toStatus && fromIdx === toIdx) {
+                    return
                 }
+
+                console.log(`moving ${id} from ${fromStatus}:${fromIdx} to ${toStatus}:${toIdx}`)
+                props.activityMoved(id, fromStatus, toStatus, fromIdx, toIdx)
             }
         },
         collect: (monitor) => ({
@@ -51,11 +52,11 @@ const ActivityListItem = (props: Props) => {
     })
 
     const [{ handlerId }, drop] = useDrop({
-        accept: DragDropTypes.Activity,
+        accept: DragTypes.Activity,
         drop: (item, monitor) => ({
             id: activity.id,
-            rank: props.rank,
-            status: activity.status,
+            toStatus: activity.statusId,
+            toIdx: props.index
         }),
         hover: (item, monitor) => {
         },
@@ -76,9 +77,8 @@ const ActivityListItem = (props: Props) => {
             <div onClick={(event) => { event.stopPropagation(); setOpenActivity(true) }}>
                 <div className='activity-card__source-color' style={{ background: props.sourceColor }} />
                 <p className='title'>{activity.title}</p>
-                {(activity.description && !hideDetails) && <p>{activity.description}</p>}
-                {<p>rankProp: {props.rank}</p>}
-                {<p>rank: {activity.rank}</p>}
+                {(activity.description && showDetails) && <p>{activity.description}</p>}
+                {showStatus && <p>{activity.statusId}</p>}
                 {activity.dueDate && <p>Due: {activity.dueDate}</p>}
             </div>
             <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
@@ -95,9 +95,10 @@ const mapStateToProps = (state: AppState, ownProps: any) => ({
 })
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
-    activityRemovedAsync: (id: string) => dispatch(activityRemovedAsync(id)),
+    activityRemovedAsync: (id: string, statusId: string) => dispatch(activityRemovedAsync(id, statusId)),
     activityEditedAsync: (activity: Partial<Activity>) => dispatch(activityEditedAsync(activity)),
-    activityEdited: (activity: Partial<Activity>) => dispatch(activityEdited(activity)),
+    activityEdited: (activity: Partial<Activity>) => { console.log('activityEdited'); dispatch(activityEdited(activity)) },
+    activityMoved: (id: Activity['id'], fromStatus: string, toStatus: string, fromIdx: number, toIdx: number) => dispatch(activityMovedAsync(id, fromStatus, toStatus, fromIdx, toIdx))
 })
 
 const connector = connect(mapStateToProps, mapDispatchToProps)

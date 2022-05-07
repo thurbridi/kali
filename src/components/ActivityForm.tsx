@@ -1,9 +1,8 @@
 import React, { useState } from "react"
-import { Activity, ActivityStatus, Source } from '../types/types'
+import { Activity, Source } from '../types/types'
 import { connect, ConnectedProps } from "react-redux"
 import { activityAddedAsync, activityEditedAsync, activityRemovedAsync } from "../actions/activities"
 import { AppDispatch, AppState } from "../store/store"
-import { stat } from "original-fs"
 
 
 interface Props extends PropsFromRedux {
@@ -37,8 +36,8 @@ const ActivityForm = (props: Props) => {
                         : props.activityAddedAsync({
                             title,
                             description,
-                            rank: props.nextRank,
-                            sourceId: source.id
+                            sourceId: source.id,
+                            statusId: props.initalStatus
                         })
                     props.onSubmit(event)
                 }}
@@ -61,7 +60,7 @@ const ActivityForm = (props: Props) => {
             {activity ?
                 <div style={{ alignSelf: "center" }}>
                     <button className="button--cautious"
-                        onClick={() => props.activityRemovedAsync(activity.id)}
+                        onClick={() => props.activityRemovedAsync(activity.id, activity.statusId)}
                     >
                         Remove Activity
                     </button>
@@ -71,11 +70,11 @@ const ActivityForm = (props: Props) => {
 }
 
 const mapStateToProps = (state: AppState) => ({
-    nextRank: Object.values(state.activities).filter((activity) => activity.status === ActivityStatus.Backlog).length
+    initalStatus: Object.values(state.statusLists).filter((list) => list.isInitial)[0].status
 })
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
-    activityRemovedAsync: (id: string) => dispatch(activityRemovedAsync(id)),
+    activityRemovedAsync: (id: string, statusId: string) => dispatch(activityRemovedAsync(id, statusId)),
     activityAddedAsync: (activityData: Partial<Activity>) => dispatch(activityAddedAsync(activityData)),
     activityEditedAsync: (activity: Activity) => dispatch(activityEditedAsync(activity))
 })

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react"
 import SourceListItem from './SourceListItem'
-import { Source, Activity, ActivityStatus } from '../types/types'
+import { Source, Activity, ActivityStatus, StatusList } from '../types/types'
 import Modal from 'react-modal'
 import SourceForm from "./SourceForm"
-import { connect } from "react-redux"
+import { connect, ConnectedProps } from "react-redux"
 import { AppState } from "../store/store"
 
+interface Props extends PropsFromRedux {
+}
 
-const SourceList = (props: any) => {
+const SourceList = (props: Props) => {
     const [open, setOpen] = useState(false)
 
     useEffect(() => Modal.setAppElement('body'), [])
@@ -25,8 +27,10 @@ const SourceList = (props: any) => {
             </div>
             {
                 Object.values(props.sources).map((source: Source) => {
-                    const sourceActivities = Object.values(props.activities).filter((activity: Activity) => activity.sourceId === source.id)
-                    const numCompleted = sourceActivities.filter((activity: Activity) => activity.status === ActivityStatus.Done).length
+                    const sourceActivities = Object.values(props.activities).filter((activity) => activity.sourceId === source.id)
+                    const numCompleted = props.terminalStatusList.activityIds
+                        .map((activityId) => props.activities[activityId])
+                        .filter((activity) => activity.sourceId === source.id).length
 
                     return <SourceListItem
                         key={source.id}
@@ -43,11 +47,14 @@ const SourceList = (props: any) => {
     )
 }
 
-const mapStateToProps = (state: AppState) => {
-    return {
-        sources: state.sources,
-        activities: state.activities,
-    }
-}
+const mapStateToProps = (state: AppState) => ({
+    sources: state.sources,
+    activities: state.activities,
+    terminalStatusList: Object.values(state.statusLists).filter((list) => list.isTerminal)[0] as StatusList
+})
 
-export default connect(mapStateToProps)(SourceList)
+const connector = connect(mapStateToProps)
+
+type PropsFromRedux = ConnectedProps<typeof connector>
+
+export default connector(SourceList)

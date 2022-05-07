@@ -81,7 +81,11 @@ const SourceForm = (props: Props) => {
                         <div>
                             {
                                 props.sourceActivities.map((activity: Activity) =>
-                                    <ActivityListItem key={activity.id} activity={activity} hideDetails={true} />
+                                    <ActivityListItem
+                                        key={activity.id}
+                                        activity={activity}
+                                        showStatus={true}
+                                    />
                                 )
                             }
                         </div>

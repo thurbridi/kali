@@ -1,10 +1,20 @@
+import { stat } from "original-fs"
+import { AppState } from "../store/store"
 import type { Action, Activity } from "../types/types"
 
+interface Slice {
+    [id: string]: Activity
+}
 
-export const activitiesReducer = (state: { [id: string]: Activity } = {}, action: Action) => {
+export const activitiesReducer = (state: Slice = {}, action: Action): Slice => {
     switch (action.type) {
+        case 'root/stateFetched': {
+            return action.payload.activities
+        }
+
         case 'activities/activityAdded': {
             const activity = action.payload
+
             return {
                 ...state,
                 [activity.id]: activity
@@ -19,9 +29,18 @@ export const activitiesReducer = (state: { [id: string]: Activity } = {}, action
             }
         }
 
+        case 'activitites/activityMoved': {
+            const { id, toStatus } = action.payload
+            return {
+                ...state,
+                [id]: { ...state[id], statusId: toStatus }
+            }
+        }
+
         case 'activities/activityRemoved': {
+            const { id } = action.payload
             const newState = { ...state }
-            delete newState[action.payload]
+            delete newState[id]
             return newState
         }
 
