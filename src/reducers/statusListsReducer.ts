@@ -57,6 +57,20 @@ export const statusListsReducer = (state: Slice = {}, action: Action): Slice => 
             }
         }
 
+        case 'sources/sourceRemoved': {
+            const { sourceId, sourceActivitiesIds } = action.payload
+
+            const newState = { ...state }
+            for (const key of Object.keys(newState)) {
+                newState[key] = {
+                    ...newState[key],
+                    activityIds: newState[key].activityIds.filter((id) => !sourceActivitiesIds.includes(id))
+                }
+            }
+
+            return newState
+        }
+
         case 'statusLists/listsSorted': {
             return state
         }

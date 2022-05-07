@@ -30,9 +30,9 @@ export const sourcesReducer = (state: Slice = {}, action: Action): Slice => {
         }
 
         case 'sources/sourceRemoved': {
+            const { sourceId } = action.payload
             const newState = { ...state }
-
-            delete newState[action.payload]
+            delete newState[sourceId]
             return newState
         }
 

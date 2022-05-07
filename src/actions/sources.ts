@@ -1,6 +1,6 @@
-import { Action, Source } from "../types/types";
+import { Action, Activity, Source } from "../types/types";
 import { v4 as uuidv4 } from 'uuid';
-import { AppDispatch } from "../store/store";
+import { AppDispatch, AppState } from "../store/store";
 
 
 
@@ -18,7 +18,7 @@ export const sourceAddedAsync = (sourceData: Partial<Source> = {}) => {
             color: '#ffffff',
             ...sourceData
         }
-        return window.storageAPI.storeKey(`state.sources.${source.id}`, source)
+        await window.storageAPI.storeKey(`state.sources.${source.id}`, source)
             .then(() => dispatch(sourceAdded(source)))
     }
 }
@@ -30,6 +30,7 @@ export const sourceEdited = (source: Source): Action => ({
     }
 })
 
+// FIXME: I don't like having to mirror the behavior of the reducer in the "database"
 export const sourceEditedAsync = (source: Source) => {
     return async (dispatch: AppDispatch) => {
         return window.storageAPI.storeKey(`state.sources.${source.id}`, source)
@@ -37,23 +38,22 @@ export const sourceEditedAsync = (source: Source) => {
     }
 }
 
-export const sourceRemoved = (sourceId: string): Action => ({
+export const sourceRemoved = (sourceId: string, sourceActivitiesIds: Activity['id'][]): Action => ({
     type: 'sources/sourceRemoved',
-    payload: sourceId
+    payload: {
+        sourceId,
+        sourceActivitiesIds
+    }
 })
 
-// FIXME: I don't like having to mirror the behavior of the reducer in the "database"
 export const sourceRemovedAsync = (sourceId: string) => {
-    return async (dispatch: AppDispatch) => {
-        return window.storageAPI.deleteKey(`state.sources.${sourceId}`)
-            .then(() => window.storageAPI.loadKey('state.activities'))
-            .then((activities) => {
-                for (const key of Object.keys(activities)) {
-                    if (activities[key].sourceId === sourceId) {
-                        window.storageAPI.deleteKey(`state.activities.${key}`)
-                    }
-                }
-            })
-            .then(() => dispatch(sourceRemoved(sourceId)))
+    return async (dispatch: AppDispatch, getState: () => AppState) => {
+        const sourceActivitiesIds = Object.values(getState().activities)
+            .filter((activity) => activity.sourceId === sourceId)
+            .map((activity) => activity.id)
+
+        dispatch(sourceRemoved(sourceId, sourceActivitiesIds))
+
+        window.storageAPI.storeKey('state', getState())
     }
 }

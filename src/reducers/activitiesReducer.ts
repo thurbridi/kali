@@ -50,7 +50,7 @@ export const activitiesReducer = (state: Slice = {}, action: Action): Slice => {
         }
 
         case 'sources/sourceRemoved': {
-            const sourceId = action.payload
+            const { sourceId } = action.payload
             const newState = { ...state }
             for (const key of Object.keys(newState)) {
                 if (newState[key].sourceId === sourceId) {
