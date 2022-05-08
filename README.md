@@ -8,7 +8,7 @@ Kali is an [Electron](https://www.electronjs.org/) Kanban app for individuals. K
 ![](pre-release.png)
 
 ## Features
-- Keep your data with open formats and sync howerver you like
+- Keep your data with open formats and sync however you like
 - No boards! Everything is kept in view (filtering coming soon™)
 - Rich markdown support for documenting activities
 
