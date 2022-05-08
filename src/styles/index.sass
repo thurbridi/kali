@@ -9,7 +9,10 @@ $regular-weight:   400
 $medium-weight: 500
 
 $font-color: #646464
+$font-color-dark: #cedbea
 $background-color: #fafafa
+$background-color-dark: #0d1117
+
 $caution-color: #FF311F
 
 @font-face
@@ -67,7 +70,6 @@ body
     overflow: hidden
     margin: $s-size
     border-radius: $s-size
-    box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
 
     &__title
         padding: $s-size
@@ -78,10 +80,11 @@ body
     padding: $s-size
 
 .activity-card
+    background: lighten($background-color, 3)
     margin-bottom: 1.2rem
     padding: $s-size
     border-radius: $s-size
-    box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
+    box-shadow: .2rem .2rem .5rem darken($background-color, 20%)
     min-width: 0
 
     &__description
@@ -89,9 +92,10 @@ body
         overflow: clip
 
 .source-card
+    background: lighten($background-color, 3)
     margin-bottom: 1.2rem
     border-radius: $s-size
-    box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
+    box-shadow: .2rem .2rem .5rem darken($background-color, 20%)
 
     &__banner
         height: $l-size
@@ -159,7 +163,7 @@ p.title
 button
     font-famili: Overpass Medium
     color: $background-color
-    background: #2a2a2a
+    background: $font-color
     margin: $s-size
     border: none
     border-radius: .4rem
@@ -175,9 +179,6 @@ input
     padding: $s-size $m-size
     color: $font-color
     border: none
-    // box-sizing: border-box    
-    // border: 1px solid $font-color
-    // border-radius: $s-size
 
 input.color
     width: 9rem
@@ -199,12 +200,12 @@ textarea
     border-radius: $s-size
     resize: none
 
+
 .ReactModal__Content--after-open
     margin-left: auto
     margin-right: auto
     padding: none
     width: 80rem
-    background: $background-color
 
 ::-webkit-scrollbar 
     width: $s-size
@@ -213,5 +214,5 @@ textarea
   border-radius: $s-size
 
 ::-webkit-scrollbar-thumb 
-  background: #dddddd
+  background: darken($background-color, 5)
   border-radius: $s-size
