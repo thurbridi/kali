@@ -1,5 +1,8 @@
-# Kali
+<p align="center">
+    <img src="kali.png" alt="Logo" width="400">
+</p>
 
+## About
 Kali is an [Electron](https://www.electronjs.org/) Kanban app for individuals. Keep track of everything you are doing in a single screen, no boards.
 
 ![](pre-release.png)
