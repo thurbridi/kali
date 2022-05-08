@@ -28,8 +28,8 @@ export const activityAddedAsync = (activityData: Partial<Activity> = {}) => {
     return async (dispatch: AppDispatch, getState: () => AppState) => {
         const id = uuidv4()
         dispatch(activityAdded({ ...activityData, id }))
-        const activity = getState().activities[id]
-        await window.storageAPI.storeKey(`state.activities.${activity.id}`, activity)
+        const state = getState()
+        await window.storageAPI.storeKey('state', state)
     }
 }
 
