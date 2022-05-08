@@ -43,6 +43,7 @@ body
     font-size: 1.4rem
     height: 100%
     margin: 0
+    overflow: hidden
 
 #root
     width: 100vw
@@ -50,7 +51,6 @@ body
     position: absolute
 
 .workspace
-    overflow: hidden
     height: 100vh
     display: grid
     grid-template-columns: 1fr 9fr
@@ -118,6 +118,32 @@ body
     height: 10px
     width: 30px
 
+.markdown-editor
+    margin: $s-size
+    box-sizing: border-box    
+    border: none
+    display: flex
+    flex-direction: row-reverse
+
+    textarea, &__preview
+        padding: $s-size
+        border: none
+
+    &__toolbar
+        float: right
+        padding: $s-size
+        display: flex
+        justify-content: flex-end
+        alignItems: center        
+    
+    &__input, &__preview
+        width: -webkit-fill-available
+
+.react-icons
+    height: $m-size
+    width: $m-size
+    vertical-align: middle
+
 form
     display: flex
     flex-direction: column
@@ -148,9 +174,10 @@ input
     margin: $s-size
     padding: $s-size $m-size
     color: $font-color
-    box-sizing: border-box    
-    border: 1px solid $font-color
-    border-radius: $s-size
+    border: none
+    // box-sizing: border-box    
+    // border: 1px solid $font-color
+    // border-radius: $s-size
 
 input.color
     width: 9rem
@@ -163,7 +190,6 @@ input.title
     font-family: Overpass Medium
 
 textarea
-    margin: $s-size
     font-family: Overpass Light
     padding: $s-size $m-size
     color: $font-color

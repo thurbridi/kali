@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
 import rehypeKatex from "rehype-katex"
+import MarkdownEditor from "./MardownEditor"
 
 
 interface Props extends PropsFromRedux {
@@ -62,15 +63,11 @@ const ActivityForm = (props: Props) => {
                     onChange={onTitleChange}
                     autoFocus
                 />
-                <textarea
-                    className="detail"
-                    placeholder='Description'
+                <MarkdownEditor
+                    startInEditMode={!activity}
                     value={description}
                     onChange={onDescriptionChange}
                 />
-                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
-                    {description}
-                </ReactMarkdown>
                 <button>{activity ? 'Save' : 'Add activity'}</button>
             </form >
             {

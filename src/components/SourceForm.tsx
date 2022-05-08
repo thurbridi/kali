@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import MarkdownEditor from './MardownEditor';
 
 interface Props extends PropsFromRedux {
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
@@ -68,7 +69,7 @@ const SourceForm = (props: Props) => {
                     placeholder='Source title'
                     autoFocus
                 />
-                <textarea
+                {/* <textarea
                     className='detail'
                     value={description}
                     onChange={onDescriptionChange}
@@ -76,7 +77,12 @@ const SourceForm = (props: Props) => {
                 />
                 <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
                     {description}
-                </ReactMarkdown>
+                </ReactMarkdown> */}
+                <MarkdownEditor
+                    startInEditMode={!props.sourceItem}
+                    value={description}
+                    onChange={onDescriptionChange}
+                />
                 <button>{props.sourceItem ? 'Save' : 'Add'}</button>
             </form>
             {
