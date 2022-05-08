@@ -6,7 +6,11 @@ import { connect, ConnectedProps } from 'react-redux';
 import { activityEdited, activityEditedAsync, activityMoved, activityMovedAsync, activityRemovedAsync } from '../actions/activities';
 import { AppDispatch, AppState } from '../store/store';
 import { useDrag, useDrop } from 'react-dnd';
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import 'katex/dist/katex.min.css'
 
 interface Props extends PropsFromRedux {
     activity: Activity
@@ -73,11 +77,13 @@ const ActivityListItem = (props: Props) => {
 
     drag(drop(ref))
     return (
-        <div ref={ref} data-handler-ir={handlerId} style={{ opacity: isDragging ? 0.5 : 1 }} className='activityList__item'>
-            <div onClick={(event) => { event.stopPropagation(); setOpenActivity(true) }}>
+        <div ref={ref} data-handler-ir={handlerId} style={{ opacity: isDragging ? 0.5 : 1 }} className='activity-card'>
+            <div onClick={(event) => { event.stopPropagation(); setOpenActivity(true) }} >
                 <div className='activity-card__source-color' style={{ background: props.sourceColor }} />
                 <p className='title'>{activity.title}</p>
-                {(activity.description && showDetails) && <p>{activity.description}</p>}
+                <div className='activity-card__description'>
+                    {(activity.description && showDetails) && <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{activity.description}</ReactMarkdown>}
+                </div>
                 {showStatus && <p>{activity.statusId}</p>}
                 {activity.dueDate && <p>Due: {activity.dueDate}</p>}
             </div>

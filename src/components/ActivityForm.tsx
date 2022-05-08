@@ -1,8 +1,12 @@
 import React, { useState } from "react"
 import { Activity, Source } from '../types/types'
-import { connect, ConnectedProps } from "react-redux"
+import { connect, ConnectedProps, useSelector } from "react-redux"
 import { activityAddedAsync, activityEditedAsync, activityRemovedAsync } from "../actions/activities"
 import { AppDispatch, AppState } from "../store/store"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+import remarkMath from "remark-math"
+import rehypeKatex from "rehype-katex"
 
 
 interface Props extends PropsFromRedux {
@@ -18,6 +22,8 @@ const ActivityForm = (props: Props) => {
     const [title, setTitle] = useState(activity ? activity.title : '')
     const [description, setDescription] = useState(activity ? activity.description : '')
 
+    const sourceName = useSelector((state: AppState) => source ? source.color : state.sources[activity.sourceId].title)
+    const sourceColor = useSelector((state: AppState) => source ? source.color : state.sources[activity.sourceId].color)
 
     const onTitleChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setTitle(event.target.value)
@@ -42,12 +48,19 @@ const ActivityForm = (props: Props) => {
                     props.onSubmit(event)
                 }}
             >
+                <div className='color-banner' style={{ background: sourceColor }}>
+                    <div className="color-banner__activity-info">
+                        {activity && <p style={{ color: '#fafafa' }}>{sourceName}</p>}
+                        {activity && <p style={{ color: '#fafafa' }}>{activity.statusId}</p>}
+                    </div>
+                </div>
                 <input
                     className="title"
                     type='text'
                     placeholder='Title'
                     value={title}
                     onChange={onTitleChange}
+                    autoFocus
                 />
                 <textarea
                     className="detail"
@@ -55,17 +68,22 @@ const ActivityForm = (props: Props) => {
                     value={description}
                     onChange={onDescriptionChange}
                 />
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+                    {description}
+                </ReactMarkdown>
                 <button>{activity ? 'Save' : 'Add activity'}</button>
-            </form>
-            {activity ?
-                <div style={{ alignSelf: "center" }}>
-                    <button className="button--cautious"
-                        onClick={() => props.activityRemovedAsync(activity.id, activity.statusId)}
-                    >
-                        Remove Activity
-                    </button>
-                </div> : null}
-        </div>
+            </form >
+            {
+                activity ?
+                    <div style={{ alignSelf: "center" }
+                    } >
+                        <button className="button--cautious"
+                            onClick={() => props.activityRemovedAsync(activity.id, activity.statusId)}
+                        >
+                            Remove Activity
+                        </button>
+                    </div > : null}
+        </div >
     )
 }
 

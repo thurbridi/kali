@@ -22,7 +22,7 @@ const SourceList = (props: Props) => {
     return (
         <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h3>Sources</h3>
+                <h2>Sources</h2>
                 <button onClick={() => setOpen(true)}>+</button>
             </div>
             {

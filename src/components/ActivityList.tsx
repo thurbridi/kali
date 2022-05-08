@@ -38,9 +38,9 @@ const ActivityList = (props: Props) => {
 
 
     return (
-        <div ref={drop} className='activityList'>
-            <h3 className='activityList__title'>{props.title}</h3>
-            <div className='activityList__content'>
+        <div ref={drop} className='activity-list'>
+            <h1 className='activity-list__title'>{props.title}</h1>
+            <div className='activity-list__content'>
                 {
                     props.activities.map((activity: Activity, index: number) =>
                         <ActivityListItem

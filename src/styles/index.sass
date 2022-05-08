@@ -40,7 +40,7 @@ html
 
 body
     background: $background-color
-    font-size: $m-size
+    font-size: 1.4rem
     height: 100%
     margin: 0
 
@@ -63,46 +63,55 @@ body
     display: grid
     grid-template-columns: 1fr 1fr 1fr 1fr
 
-.activityList
+.activity-list
     overflow: hidden
     margin: $s-size
     border-radius: $s-size
     box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
 
-.activityList__title
-    padding: $s-size
+    &__title
+        padding: $s-size
 
-.activityList__content
+.activity-list__content
     height: 90vh
     overflow: auto
     padding: $s-size
 
-.activityList__item
+.activity-card
     margin-bottom: 1.2rem
     padding: $s-size
     border-radius: $s-size
     box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
     min-width: 0
 
-.sourceList__item
+    &__description
+        max-height: 2 * $xl-size
+        overflow: clip
+
+.source-card
     margin-bottom: 1.2rem
     border-radius: $s-size
     box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
 
-.source-card__banner
-    height: $l-size
-    border-radius: $s-size $s-size 0 0 
+    &__banner
+        height: $l-size
+        border-radius: $s-size $s-size 0 0 
 
-.source-card__content
-    padding: 0 $s-size $s-size $s-size
+    &__content
+        padding: 0 $s-size $s-size $s-size
 
-.source-form__color-banner
+.color-banner
     height: 10rem
     border-radius: $s-size $s-size 0 0 
-
     display: flex
     justify-content: flex-end
     align-items: flex-end
+
+    &__activity-info
+        align-self: flex-start
+        font-family: Overpass Regular
+        font-size: $m-size
+        margin: $s-size
 
 .activity-card__source-color
     border-radius: 2rem
@@ -113,20 +122,19 @@ form
     display: flex
     flex-direction: column
 
-p
+h1, p, ul, ol, blockquote
     margin-block-start: $s-size
     margin-block-end: $s-size
-    font-size: 85%
 
 p.title
-    font-size: 100%
+    font-size: $m-size
     font-family: Overpass Regular
 
 button
     font-famili: Overpass Medium
     color: $background-color
     background: #2a2a2a
-    margin: .4rem
+    margin: $s-size
     border: none
     border-radius: .4rem
 
@@ -137,33 +145,39 @@ button:hover
     box-shadow: .2rem .2rem .5rem darken($background-color, 50%)
 
 input
+    margin: $s-size
     padding: $s-size $m-size
     color: $font-color
-    border: none
+    box-sizing: border-box    
+    border: 1px solid $font-color
     border-radius: $s-size
+
+input.color
+    width: 9rem
+
+input.color--no-border
+    border: none
 
 input.title
     font-size: $l-size
     font-family: Overpass Medium
 
 textarea
+    margin: $s-size
     font-family: Overpass Light
     padding: $s-size $m-size
     color: $font-color
     height: 150px
     box-sizing: border-box
-    border: none
+    border: 1px solid $font-color
     border-radius: $s-size
     resize: none
-
-textarea.detail
-    font-size: $m-size
 
 .ReactModal__Content--after-open
     margin-left: auto
     margin-right: auto
-    padding: $s-size
-    width: 40%
+    padding: none
+    width: 80rem
     background: $background-color
 
 ::-webkit-scrollbar 

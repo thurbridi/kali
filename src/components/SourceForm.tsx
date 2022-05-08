@@ -7,6 +7,10 @@ import { colorSwatch1 } from '../colorSwatches';
 import ActivityListItem from './ActivityListItem';
 import ActivityForm from "./ActivityForm";
 import Modal from 'react-modal';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 interface Props extends PropsFromRedux {
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
@@ -41,18 +45,19 @@ const SourceForm = (props: Props) => {
     }
 
     return (
-        <div >
+        <div>
             <form onSubmit={(event) => {
                 props.sourceItem ? props.sourceEditedAsync({ ...props.sourceItem, title, description, color }) : props.sourceAddedAsync({ title, description, color })
                 props.onSubmit(event)
             }}>
-                <div className='source-form__color-banner' style={{ height: "10rem", background: color }}>
+                <div className='color-banner' style={{ background: color }}>
                     <input
+                        className='color color--no-border'
                         type='text'
                         value={color}
                         onChange={onColorChange}
                         placeholder='#'
-                        style={{ maxWidth: "7rem", background: color, color: "#fafafa" }}
+                        style={{ background: color, color: "#fafafa" }}
                     />
                 </div>
                 <input
@@ -61,6 +66,7 @@ const SourceForm = (props: Props) => {
                     value={title}
                     onChange={onTitleChange}
                     placeholder='Source title'
+                    autoFocus
                 />
                 <textarea
                     className='detail'
@@ -68,7 +74,9 @@ const SourceForm = (props: Props) => {
                     onChange={onDescriptionChange}
                     placeholder='Description'
                 />
-
+                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+                    {description}
+                </ReactMarkdown>
                 <button>{props.sourceItem ? 'Save' : 'Add'}</button>
             </form>
             {
