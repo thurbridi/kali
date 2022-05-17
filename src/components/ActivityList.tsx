@@ -42,14 +42,16 @@ const ActivityList = (props: Props) => {
             <h1 className='activity-list__title'>{props.title}</h1>
             <div className='activity-list__content'>
                 {
-                    props.activities.map((activity: Activity, index: number) =>
-                        <ActivityListItem
-                            key={activity.id}
-                            activity={activity}
-                            showDetails={true}
-                            index={index}
-                        />
-                    )
+                    props.activities
+                        .filter((activity) => !activity.isArchived)
+                        .map((activity: Activity, index: number) =>
+                            <ActivityListItem
+                                key={activity.id}
+                                activity={activity}
+                                showDetails={true}
+                                index={index}
+                            />
+                        )
                 }
             </div>
         </div>
