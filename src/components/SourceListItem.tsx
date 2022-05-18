@@ -1,10 +1,8 @@
 import React, { useState } from "react"
 import type { Source } from '../types/types'
 import Modal from 'react-modal';
-import SourceForm from "./SourceForm";
-import { sourceRemovedAsync } from "../actions/sources";
-import { connect, ConnectedProps } from "react-redux";
-import { AppDispatch } from "../store/store";
+import SourceDetails from "./SourceDetails";
+import { connect } from "react-redux";
 
 interface Props {
     source: Source,
@@ -30,7 +28,7 @@ const SourceListItem = (props: Props) => {
                     <p>{props.numCompletedActivities}/{props.numActivities} Completed</p>
                 </div>
                 <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
-                    <SourceForm onSubmit={onSubmit} sourceItem={props.source} />
+                    <SourceDetails onSubmit={onSubmit} sourceItem={props.source} />
                 </Modal>
             </div>
         </div >

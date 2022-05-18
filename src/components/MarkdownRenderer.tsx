@@ -10,6 +10,7 @@ interface Props {
 }
 
 const MardownRenderer = (props: Props) => {
+    // Just a wrapper component to use the same plugins throughout the app
     return (
         <ReactMarkdown
             className={props.className}

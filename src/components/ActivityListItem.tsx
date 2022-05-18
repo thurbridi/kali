@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react'
-import { Activity, ActivityStatus, DragTypes } from '../types/types'
+import { Activity, DragTypes } from '../types/types'
 import Modal from 'react-modal';
-import ActivityForm from './ActivityForm'
+import ActivityDetails from './ActivityDetails'
 import { connect, ConnectedProps } from 'react-redux';
-import { activityEdited, activityEditedAsync, activityMoved, activityMovedAsync, activityRemovedAsync } from '../actions/activities';
+import { activityEdited, activityEditedAsync, activityMovedAsync, activityRemovedAsync } from '../actions/activities';
 import { AppDispatch, AppState } from '../store/store';
 import { useDrag, useDrop } from 'react-dnd';
 import ReactMarkdown from 'react-markdown';
@@ -88,7 +88,7 @@ const ActivityListItem = (props: Props) => {
                 {activity.dueDate && <p>Due: {activity.dueDate}</p>}
             </div>
             <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
-                <ActivityForm onSubmit={onSubmit} activity={activity} />
+                <ActivityDetails onSubmit={onSubmit} activity={activity} />
             </Modal>
         </div >
     )

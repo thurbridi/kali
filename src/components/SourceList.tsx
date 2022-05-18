@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
 import SourceListItem from './SourceListItem'
-import { Source, Activity, ActivityStatus, StatusList } from '../types/types'
+import { Source, StatusList } from '../types/types'
 import Modal from 'react-modal'
-import SourceForm from "./SourceForm"
+import SourceDetails from "./SourceDetails"
 import { connect, ConnectedProps } from "react-redux"
 import { AppState } from "../store/store"
 
@@ -41,7 +41,7 @@ const SourceList = (props: Props) => {
                 })
             }
             <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
-                <SourceForm onSubmit={onSubmit} />
+                <SourceDetails onSubmit={onSubmit} />
             </Modal>
         </div>
     )

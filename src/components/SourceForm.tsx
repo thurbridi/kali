@@ -1,130 +1,79 @@
-import React, { useState } from 'react';
-import type { Activity, Source } from '../types/types';
+import { getRandomColor } from '../utils/colorSwatches'
+import { Controller, SubmitHandler, useForm } from "react-hook-form"
+import type { Color, Source } from '../types/types'
+import React from 'react'
+import { sourceRemovedAsync, sourceAddedAsync, sourceEditedAsync } from '../actions/sources'
 import { connect, ConnectedProps } from 'react-redux'
-import { sourceAddedAsync, sourceEditedAsync, sourceRemovedAsync } from '../actions/sources';
-import { AppDispatch, AppState } from '../store/store';
-import { colorSwatch1 } from '../colorSwatches';
-import ActivityListItem from './ActivityListItem';
-import ActivityForm from "./ActivityForm";
-import Modal from 'react-modal';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-import MarkdownEditor from './MardownEditor';
+import { AppDispatch } from '../store/store'
+import MarkdownEditor from './MardownEditor'
+
 
 interface Props extends PropsFromRedux {
-    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+    onSubmit: (event: React.BaseSyntheticEvent) => void
     sourceItem?: Source
 }
 
+interface Inputs {
+    color: Color,
+    title: string,
+    description: string,
+}
+
 const SourceForm = (props: Props) => {
-    const colorIdx = Math.floor(Math.random() * (colorSwatch1.length))
-    const defaultColor = colorSwatch1[colorIdx]
+    const { register, handleSubmit, control, watch, formState: { errors } } = useForm<Inputs>({
+        defaultValues: {
+            color: props.sourceItem ? props.sourceItem.color : getRandomColor(),
+            title: props.sourceItem ? props.sourceItem.title : '',
+            description: props.sourceItem ? props.sourceItem.description : '',
+        }
+    })
 
-    const [openActivity, setOpenActivity] = useState(false)
-
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        setOpenActivity(false)
-    }
-
-    const [title, setTitle] = useState(props.sourceItem ? props.sourceItem.title : '')
-    const [description, setDescription] = useState(props.sourceItem ? props.sourceItem.description : '')
-    const [color, setColor] = useState(props.sourceItem ? props.sourceItem.color : defaultColor)
-
-    const onTitleChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setTitle(event.target.value)
-    }
-
-    const onDescriptionChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setDescription(event.target.value)
-    }
-
-    const onColorChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setColor(`#${event.target.value.slice(1)}`)
+    const onSubmit: SubmitHandler<Inputs> = (data, event) => {
+        const { title, description, color } = data
+        props.sourceItem ?
+            props.sourceEditedAsync({ ...props.sourceItem, title, description, color })
+            : props.sourceAddedAsync({ title, description, color })
+        props.onSubmit(event)
     }
 
     return (
-        <div>
-            <form onSubmit={(event) => {
-                props.sourceItem ? props.sourceEditedAsync({ ...props.sourceItem, title, description, color }) : props.sourceAddedAsync({ title, description, color })
-                props.onSubmit(event)
-            }}>
-                <div className='color-banner' style={{ background: color }}>
-                    <input
-                        className='color color--no-border'
-                        type='text'
-                        value={color}
-                        onChange={onColorChange}
-                        placeholder='#'
-                        style={{ background: color, color: "#fafafa" }}
-                    />
-                </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className='color-banner' style={{ background: watch('color') }}>
                 <input
-                    className='title'
+                    className='color color--no-border'
                     type='text'
-                    value={title}
-                    onChange={onTitleChange}
-                    placeholder='Source title'
-                    autoFocus
+                    defaultValue={watch('color')}
+                    style={{ background: watch('color'), color: "#fafafa" }}
+                    {...register('color', {
+                        pattern: /^#[0-9a-f]{6}/i,
+                        maxLength: 7,
+                    })}
                 />
-                {/* <textarea
-                    className='detail'
-                    value={description}
-                    onChange={onDescriptionChange}
-                    placeholder='Description'
-                />
-                <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
-                    {description}
-                </ReactMarkdown> */}
-                <MarkdownEditor
-                    startInEditMode={!props.sourceItem}
-                    value={description}
-                    onChange={onDescriptionChange}
-                />
-                <button>{props.sourceItem ? 'Save' : 'Add'}</button>
-            </form>
-            {
-                props.sourceItem ?
-                    <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <h3>Activities</h3>
-                            <button onClick={() => setOpenActivity(true)}>+</button>
-                        </div>
-                        <div>
-                            {
-                                props.sourceActivities.map((activity: Activity) =>
-                                    <ActivityListItem
-                                        key={activity.id}
-                                        activity={activity}
-                                        showStatus={true}
-                                    />
-                                )
-                            }
-                        </div>
-                        <div style={{ alignSelf: "center" }}>
-                            <button className="button--cautious" onClick={() => {
-                                props.sourceRemovedAsync(props.sourceItem.id)
-                            }}>Remove Source</button>
-                        </div>
-                        <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
-                            <ActivityForm source={props.sourceItem} onSubmit={onSubmit} />
-                        </Modal>
-                    </div>
-                    : null
-            }
-        </div>
-    )
-}
+                {errors.color && "Color should be in HEX format"}
+            </div>
+            <input
+                className='title'
+                type='text'
+                placeholder='Source title'
+                autoFocus
+                {...register('title', { required: true })}
+            />
+            {errors.title && "Title is required"}
+            <Controller
+                control={control}
+                name='description'
+                render={({ field: { onChange, value } }) =>
+                    <MarkdownEditor
+                        startInEditMode={!props.sourceItem}
+                        onChange={onChange}
+                        value={value}
+                    />
+                }
+            />
 
-const mapStateToProps = (state: AppState, props: any) => {
-    const sourceActivities = props.sourceItem ? Object.values(state.activities).filter((activity: Activity) =>
-        activity.sourceId === props.sourceItem.id
-    ) : null
-    return {
-        sourceActivities
-    }
+            <button type='submit'>{props.sourceItem ? 'Save' : 'Add'}</button>
+        </form>
+    )
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
@@ -133,7 +82,7 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
     sourceEditedAsync: (source: Source) => dispatch(sourceEditedAsync(source))
 })
 
-const connector = connect(mapStateToProps, mapDispatchToProps)
+const connector = connect(undefined, mapDispatchToProps)
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 

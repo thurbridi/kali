@@ -1,86 +1,80 @@
-import React, { useState } from "react"
-import { Activity, Source } from '../types/types'
+import React from "react"
+
 import { connect, ConnectedProps, useSelector } from "react-redux"
-import { activityAddedAsync, activityEditedAsync, activityRemovedAsync } from "../actions/activities"
 import { AppDispatch, AppState } from "../store/store"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
-import remarkMath from "remark-math"
-import rehypeKatex from "rehype-katex"
+import { activityRemovedAsync, activityAddedAsync, activityEditedAsync } from "../actions/activities"
+import { Activity, Source } from "../types/types"
+import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import MarkdownEditor from "./MardownEditor"
 
-
 interface Props extends PropsFromRedux {
-    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+    onSubmit: (event: React.BaseSyntheticEvent) => void
     source?: Source
     activity?: Activity
+}
+
+interface Inputs {
+    title: string,
+    description: string,
 }
 
 const ActivityForm = (props: Props) => {
     const activity = props.activity
     const source = props.source
 
-    const [title, setTitle] = useState(activity ? activity.title : '')
-    const [description, setDescription] = useState(activity ? activity.description : '')
-
-    const sourceName = useSelector((state: AppState) => source ? source.color : state.sources[activity.sourceId].title)
+    const sourceTitle = useSelector((state: AppState) => source ? source.title : state.sources[activity.sourceId].title)
     const sourceColor = useSelector((state: AppState) => source ? source.color : state.sources[activity.sourceId].color)
 
-    const onTitleChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setTitle(event.target.value)
-    }
+    const { register, handleSubmit, control, formState: { errors } } = useForm<Inputs>({
+        defaultValues: {
+            title: props.activity ? props.activity.title : '',
+            description: props.activity ? props.activity.description : '',
+        }
+    })
 
-    const onDescriptionChange: React.ChangeEventHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setDescription(event.target.value)
+    const onSubmit: SubmitHandler<Inputs> = (data, event) => {
+        const { title, description } = data
+        activity ?
+            props.activityEditedAsync({ ...activity, title, description })
+            : props.activityAddedAsync({
+                title,
+                description,
+                sourceId: source.id,
+                statusId: props.initalStatus
+            })
+        props.onSubmit(event)
     }
 
     return (
-        <div style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <form
-                onSubmit={(event) => {
-                    activity ?
-                        props.activityEditedAsync({ ...activity, title, description })
-                        : props.activityAddedAsync({
-                            title,
-                            description,
-                            sourceId: source.id,
-                            statusId: props.initalStatus
-                        })
-                    props.onSubmit(event)
-                }}
-            >
-                <div className='color-banner' style={{ background: sourceColor }}>
-                    <div className="color-banner__activity-info">
-                        {activity && <p style={{ color: '#fafafa' }}>{sourceName}</p>}
-                        {activity && <p style={{ color: '#fafafa' }}>{activity.statusId}</p>}
-                    </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            < div className='color-banner' style={{ background: sourceColor }
+            }>
+                <div className="color-banner__activity-info">
+                    {activity && <p style={{ color: '#fafafa' }}>{sourceTitle}</p>}
+                    {activity && <p style={{ color: '#fafafa' }}>{activity.statusId}</p>}
                 </div>
-                <input
-                    className="title"
-                    type='text'
-                    placeholder='Title'
-                    value={title}
-                    onChange={onTitleChange}
-                    autoFocus
-                />
-                <MarkdownEditor
-                    startInEditMode={!activity}
-                    value={description}
-                    onChange={onDescriptionChange}
-                />
-                <button>{activity ? 'Save' : 'Add activity'}</button>
-            </form >
-            {
-                activity ?
-                    <div style={{ alignSelf: "center" }
-                    } >
-                        <button className="button--cautious"
-                            onClick={() => props.activityRemovedAsync(activity.id, activity.statusId)}
-                        >
-                            Remove Activity
-                        </button>
-                    </div > : null}
-        </div >
+            </div >
+            <input
+                className='title'
+                type='text'
+                placeholder='Activity title'
+                autoFocus
+                {...register('title', { required: true })}
+            />
+            {errors.title && "Title is required"}
+            <Controller
+                control={control}
+                name='description'
+                render={({ field: { onChange, value } }) =>
+                    <MarkdownEditor
+                        startInEditMode={!props.activity}
+                        onChange={onChange}
+                        value={value}
+                    />
+                }
+            />
+            <button type='submit'>{activity ? 'Save' : 'Add activity'}</button>
+        </form >
     )
 }
 

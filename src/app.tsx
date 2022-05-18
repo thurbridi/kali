@@ -17,6 +17,5 @@ const container = document.getElementById('root')
 const root = createRoot(container)
 
 root.render(<p>Loading...</p>)
-// FIXME: dispatching many actions sequentially (https://redux.js.org/style-guide/#avoid-dispatching-many-actions-sequentially)
 store.dispatch(stateFetchedAsync())
     .then(() => root.render(<App />))
