@@ -69,7 +69,6 @@ const ActivityListItem = (props: Props) => {
         })
     })
 
-
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setOpenActivity(false)
@@ -85,6 +84,7 @@ const ActivityListItem = (props: Props) => {
                     {(activity.description && showDetails) && <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>{activity.description}</ReactMarkdown>}
                 </div>
                 {showStatus && <p>{activity.statusId}</p>}
+                {showStatus && activity.isArchived && <p>ARCHIVED</p>}
                 {activity.dueDate && <p>Due: {activity.dueDate}</p>}
             </div>
             <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>

@@ -16,6 +16,7 @@ interface Props extends PropsFromRedux {
 interface Inputs {
     title: string,
     description: string,
+    isArchived: boolean,
 }
 
 const ActivityForm = (props: Props) => {
@@ -29,16 +30,18 @@ const ActivityForm = (props: Props) => {
         defaultValues: {
             title: props.activity ? props.activity.title : '',
             description: props.activity ? props.activity.description : '',
+            isArchived: props.activity ? props.activity.isArchived : false,
         }
     })
 
     const onSubmit: SubmitHandler<Inputs> = (data, event) => {
-        const { title, description } = data
+        const { title, description, isArchived } = data
         activity ?
-            props.activityEditedAsync({ ...activity, title, description })
+            props.activityEditedAsync({ ...activity, title, description, isArchived })
             : props.activityAddedAsync({
                 title,
                 description,
+                isArchived,
                 sourceId: source.id,
                 statusId: props.initalStatus
             })
@@ -73,6 +76,10 @@ const ActivityForm = (props: Props) => {
                     />
                 }
             />
+            <div style={{ display: 'flex', alignItems: 'baseline', padding: '.8rem' }}>
+                <label>Archived</label>
+                <input type="checkbox" placeholder="Archived" {...register("isArchived", {})} />
+            </div>
             <button type='submit'>{activity ? 'Save' : 'Add activity'}</button>
         </form >
     )
