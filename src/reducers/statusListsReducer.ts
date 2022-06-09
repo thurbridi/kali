@@ -1,4 +1,4 @@
-import type { Action, StatusList } from "../types/types"
+import { Action, Activity, ActivityStatus, StatusList } from "../types/types"
 
 interface Slice {
     [id: string]: StatusList
@@ -11,7 +11,7 @@ export const statusListsReducer = (state: Slice = {}, action: Action): Slice => 
         }
 
         case 'activities/activityAdded': {
-            const activity = action.payload
+            const activity: Activity = action.payload
             let initialList = Object.values(state).filter((list) => list.isInitial)[0]
 
             initialList = {
@@ -20,6 +20,27 @@ export const statusListsReducer = (state: Slice = {}, action: Action): Slice => 
             }
 
             return { ...state, [initialList.status]: initialList }
+        }
+
+        case 'activities/activityEdited': {
+            const activityData: Partial<Activity> = action.payload
+            const activityStatus = activityData.statusId
+
+            if (activityData.isArchived) {
+                return {
+                    ...state,
+                    [activityStatus]: { ...state[activityStatus], activityIds: state[activityStatus].activityIds.filter((activityId) => activityData.id !== activityId) }
+                }
+            } else {
+                if (state[activityStatus].activityIds.includes(activityData.id)) {
+                    return state
+                } else {
+                    return {
+                        ...state,
+                        [activityStatus]: { ...state[activityStatus], activityIds: [...state[activityStatus].activityIds, activityData.id] }
+                    }
+                }
+            }
         }
 
         case 'activities/activityRemoved': {
