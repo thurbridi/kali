@@ -1,13 +1,44 @@
-import type { Action, StatusList } from "../types/types"
+import { Action, ActivityStatus, Activity, StatusList } from "../types/types"
 
 interface Slice {
     [id: string]: StatusList
 }
 
-export const statusListsReducer = (state: Slice = {}, action: Action): Slice => {
+const defaultState: Slice = {
+    'BACKLOG': {
+        'status': ActivityStatus.Backlog,
+        'isInitial': true,
+        'isTerminal': false,
+        'activityIds': [],
+    },
+    'AVAILABLE': {
+        'status': ActivityStatus.Backlog,
+        'isInitial': false,
+        'isTerminal': false,
+        'activityIds': [],
+    },
+    'IN PROGRESS': {
+        'status': ActivityStatus.Backlog,
+        'isInitial': false,
+        'isTerminal': false,
+        'activityIds': [],
+    },
+    'DONE': {
+        'status': ActivityStatus.Backlog,
+        'isInitial': false,
+        'isTerminal': true,
+        'activityIds': [],
+    },
+}
+
+export const statusListsReducer = (state = defaultState, action: Action): Slice => {
     switch (action.type) {
         case 'root/stateFetched': {
-            return action.payload.statusLists
+            if (action.payload) {
+                return action.payload.statusLists
+            } else {
+                return state
+            }
         }
 
         case 'activities/activityAdded': {

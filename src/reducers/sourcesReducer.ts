@@ -7,7 +7,11 @@ interface Slice {
 export const sourcesReducer = (state: Slice = {}, action: Action): Slice => {
     switch (action.type) {
         case 'root/stateFetched': {
-            return action.payload.sources
+            if (action.payload) {
+                return action.payload.sources
+            } else {
+                return state
+            }
         }
 
         case 'sources/sourceAdded': {

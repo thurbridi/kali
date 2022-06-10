@@ -9,7 +9,11 @@ interface Slice {
 export const activitiesReducer = (state: Slice = {}, action: Action): Slice => {
     switch (action.type) {
         case 'root/stateFetched': {
-            return action.payload.activities
+            if (action.payload) {
+                return action.payload.activities
+            } else {
+                return state
+            }
         }
 
         case 'activities/activityAdded': {
