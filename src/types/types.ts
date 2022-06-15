@@ -40,8 +40,9 @@ export interface Activity {
     title: string
     description: string
     tagIds: Tag['id'][]
+    createdDate: string | undefined
     startDate: string | undefined
-    endDate: string | undefined
+    completedDate: string | undefined
     dueDate: string | undefined
     sourceId: string
     statusId: string

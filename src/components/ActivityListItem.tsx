@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 import 'katex/dist/katex.min.css'
+import { DateTime } from 'luxon'
 
 interface Props extends PropsFromRedux {
     activity: Activity
@@ -85,7 +86,7 @@ const ActivityListItem = (props: Props) => {
                 </div>
                 {showStatus && <p>{activity.statusId}</p>}
                 {showStatus && activity.isArchived && <p>ARCHIVED</p>}
-                {activity.dueDate && <p>Due: {activity.dueDate}</p>}
+                {activity.dueDate && <p>Due: {DateTime.fromISO(activity.dueDate).toLocaleString(DateTime.DATETIME_MED)}</p>}
             </div>
             <Modal isOpen={openActivity} onRequestClose={() => setOpenActivity(false)}>
                 <ActivityDetails onSubmit={onSubmit} activity={activity} />

@@ -4,8 +4,9 @@ import { connect, ConnectedProps, useSelector } from "react-redux"
 import { AppDispatch, AppState } from "../store/store"
 import { activityRemovedAsync, activityAddedAsync, activityEditedAsync } from "../actions/activities"
 import { Activity, Source } from "../types/types"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
+import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form"
 import MarkdownEditor from "./MardownEditor"
+import { DateTime } from 'luxon'
 
 interface Props extends PropsFromRedux {
     onSubmit: (event: React.BaseSyntheticEvent) => void
@@ -17,6 +18,8 @@ interface Inputs {
     title: string,
     description: string,
     isArchived: boolean,
+    startDate: string
+    dueDate: string
 }
 
 const ActivityForm = (props: Props) => {
@@ -26,24 +29,36 @@ const ActivityForm = (props: Props) => {
     const sourceTitle = useSelector((state: AppState) => source ? source.title : state.sources[activity.sourceId].title)
     const sourceColor = useSelector((state: AppState) => source ? source.color : state.sources[activity.sourceId].color)
 
-    const { register, handleSubmit, control, formState: { errors } } = useForm<Inputs>({
+    const { register, handleSubmit, watch, control, formState: { errors } } = useForm<Inputs>({
         defaultValues: {
             title: props.activity ? props.activity.title : '',
             description: props.activity ? props.activity.description : '',
             isArchived: props.activity ? props.activity.isArchived : false,
+            startDate: undefined,
+            dueDate: undefined,
         }
     })
 
+    console.log(watch("dueDate"));
+    if (watch('dueDate')) {
+        console.log(DateTime.fromISO(watch("dueDate")).toISO());
+    }
+
     const onSubmit: SubmitHandler<Inputs> = (data, event) => {
         const { title, description, isArchived } = data
+        let { dueDate } = data
+
+        dueDate = DateTime.fromISO(dueDate).toISO() // parsing to and from ISO adds timezone data
+
         activity ?
-            props.activityEditedAsync({ ...activity, title, description, isArchived })
+            props.activityEditedAsync({ ...activity, title, description, isArchived, dueDate })
             : props.activityAddedAsync({
                 title,
                 description,
                 isArchived,
                 sourceId: source.id,
-                statusId: props.initalStatus
+                statusId: props.initalStatus,
+                dueDate
             })
         props.onSubmit(event)
     }
@@ -76,6 +91,13 @@ const ActivityForm = (props: Props) => {
                     />
                 }
             />
+            <div>
+                <label>Due</label>
+                <input
+                    type='datetime-local'
+                    {...register('dueDate')}
+                />
+            </div>
             <div style={{ display: 'flex', alignItems: 'baseline', padding: '.8rem' }}>
                 <label>Archived</label>
                 <input type="checkbox" placeholder="Archived" {...register("isArchived", {})} />

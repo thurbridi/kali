@@ -13,12 +13,12 @@ Kali is an [Electron](https://www.electronjs.org/) Kanban app for individuals. K
 - Rich markdown support for documenting activities
 
 ## Planned Features
-- Tags
-- Dark mode
-- Calendar view
-- Filtering tool
-- Time tracking and analytics
-- Notifications
-- Reports
-- Automation
-- Custom workflows
+- [ ] Tags
+- [ ] Dark mode
+- [ ] Calendar view
+- [ ] Filtering tool
+- [ ] Time tracking and analytics
+- [ ] Notifications
+- [ ] Reports
+- [ ] Automation
+- [ ] Custom workflows

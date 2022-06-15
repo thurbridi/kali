@@ -1,5 +1,6 @@
 import { Action, Activity } from "../types/types";
 import { v4 as uuidv4 } from 'uuid';
+import { DateTime } from 'luxon'
 
 import { AppDispatch, AppState } from "../store/store";
 
@@ -8,8 +9,9 @@ export const activityAdded = (activityData: Partial<Activity>): Action => {
         id: undefined,
         title: '',
         description: '',
+        createdDate: DateTime.now().toISO(),
         startDate: undefined,
-        endDate: undefined,
+        completedDate: undefined,
         dueDate: undefined,
         sourceId: undefined,
         statusId: undefined,
